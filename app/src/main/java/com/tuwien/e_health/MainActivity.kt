@@ -1,21 +1,29 @@
 package com.tuwien.e_health
 
 
+import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.icu.util.Calendar
 import android.icu.util.ULocale
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessActivities
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.*
 import com.google.android.gms.fitness.request.DataReadRequest
+import com.google.android.gms.fitness.request.SessionInsertRequest
+import com.google.android.gms.fitness.request.SessionReadRequest
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DateFormat
@@ -29,6 +37,9 @@ class MainActivity : AppCompatActivity() {
     private val fitnessOptions: GoogleSignInOptionsExtension = FitnessOptions.builder()
         .addDataType(DataType.TYPE_HEART_RATE_BPM, FitnessOptions.ACCESS_READ)
         .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+        .addDataType(DataType.TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
+        .addDataType(DataType.TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_WRITE)
+        .addDataType(DataType.TYPE_WORKOUT_EXERCISE, FitnessOptions.ACCESS_READ)
         .build()
 
     private val RC_SIGNIN = 0
@@ -75,6 +86,14 @@ class MainActivity : AppCompatActivity() {
         }else{
             //already logged in
         }
+
+        // check for android permissions
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                RC_PERMISSION);
+        }
     }
 
     private fun signIn() {
@@ -86,6 +105,7 @@ class MainActivity : AppCompatActivity() {
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         val signInIntent = mGoogleSignInClient.getSignInIntent()
         startActivityForResult(signInIntent, RC_SIGNIN)
+
     }
 
     private fun reqPermissions() {
@@ -126,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG, "Range Start: $startTime")
         Log.i(TAG, "Range End: $endTime")
 
+        // create read request
         val readRequest =
             DataReadRequest.Builder()
                 .aggregate(DataType.TYPE_HEART_RATE_BPM)
@@ -139,12 +160,19 @@ class MainActivity : AppCompatActivity() {
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
+        // do read request
         if (account != null) {
             testCounter = 0
+
+            var bpmValues: MutableList<DataSet> = mutableListOf<DataSet>()
             Fitness.getHistoryClient(this, account)
                 .readData(readRequest)
                 .addOnSuccessListener { response ->
                     for (dataSet in response.buckets.flatMap { it.dataSets }) {
+                        // not every dataSet has dataPoint
+                        for (dp in dataSet.dataPoints) {
+                            bpmValues.add(dataSet)
+                        }
                         showDataSet(dataSet)
                     }
                 }
@@ -158,9 +186,8 @@ class MainActivity : AppCompatActivity() {
     private fun showDataSet(dataSet: DataSet) {
         // show important info of heart rate datapoint
 
-        testCounter++
         for (dp in dataSet.dataPoints) {
-            Log.i("History", "Data point:" + testCounter)
+            Log.i("History", "Data point:" + testCounter++)
             Log.i("History", "\tType: " + dp.dataType.name)
             Log.i("History",
                 "\tStart: " + Instant.ofEpochSecond(dp.getStartTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault())
