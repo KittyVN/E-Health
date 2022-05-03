@@ -8,6 +8,7 @@ import android.icu.util.TimeUnit
 import android.icu.util.ULocale
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.*
@@ -67,6 +68,13 @@ class MainActivity : AppCompatActivity() {
             signIn()
         }else{
             //already logged in
+        }
+
+
+        val statisticsLineChartButton = findViewById<Button>(R.id.buttonLineChart)
+        statisticsLineChartButton.setOnClickListener {
+            val Intent = Intent(this,StatisticsActivity::class.java)
+            startActivity(Intent)
         }
     }
 

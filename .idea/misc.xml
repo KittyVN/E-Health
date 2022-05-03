@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_main.xml" value="0.5541666666666667" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_statistics.xml" value="0.31354166666666666" />
+        <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_statistics_bar_chart.xml" value="0.31354166666666666" />
+        <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_statistics_line_chart.xml" value="0.5541666666666667" />
       </map>
     </option>
   </component>
