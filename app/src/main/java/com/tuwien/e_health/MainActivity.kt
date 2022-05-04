@@ -4,7 +4,6 @@ package com.tuwien.e_health
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.icu.util.Calendar
-import android.icu.util.TimeUnit
 import android.icu.util.ULocale
 import android.os.Bundle
 import android.util.Log
@@ -21,11 +20,9 @@ import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
+    private var testCounter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +54,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: Future Work, remove commends for testing purposes
-        /*
+        // TODO: Just for testing, remove later
         btnGoogleSteps.setOnClickListener {
-            readData()
+            //val endTime =  LocalDateTime.now().atZone(ZoneId.systemDefault())
+
+            // data for 1 day
+            var endTime = LocalDate.of(2022, 4, 30).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
+            val startTime = endTime.minusDays(1)
+
+            /*
+            // data for 1 week
+            var endTime = LocalDate.of(2022, 4, 29).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
+            var startTime = endTime.minusWeeks(1)
+            */
+            readHeartRateData(TimeUnit.DAYS, endTime, startTime)
         }
-        */
 
         // checks for logged account on startup, if not account, login
         if(GoogleSignIn.getLastSignedInAccount(this) == null) {
@@ -121,21 +128,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: Future Work, remove commend for testing purposes
-    /*
-    private fun readData() {
-        val endTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        val startTime = endTime.minusDays(2)
+    private fun readHeartRateData(timeInterval: TimeUnit, endTime: ZonedDateTime, startTime: ZonedDateTime) {
+        // extract heart rate for given time period
+
         Log.i(TAG, "Range Start: $startTime")
         Log.i(TAG, "Range End: $endTime")
 
         val readRequest =
             DataReadRequest.Builder()
-                //.aggregate(DataType.TYPE_HEART_RATE_BPM)
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA)
-                .bucketByTime(1, java.util.concurrent.TimeUnit.DAYS)
+                .aggregate(DataType.TYPE_HEART_RATE_BPM)
+                //.aggregate(DataType.TYPE_STEP_COUNT_DELTA)
+                .bucketByTime(1, timeInterval)
                 .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(),
-                    java.util.concurrent.TimeUnit.SECONDS
+                    TimeUnit.SECONDS
                 )
                 .build()
 
@@ -143,6 +148,7 @@ class MainActivity : AppCompatActivity() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
         if (account != null) {
+            testCounter = 0
             Fitness.getHistoryClient(this, account)
                 .readData(readRequest)
                 .addOnSuccessListener { response ->
@@ -151,37 +157,37 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "There was a problem getting the step count.", e)
+                    Log.w(TAG, "There was a problem getting the heart rate.", e)
                 }
 
         }
     }
 
     private fun showDataSet(dataSet: DataSet) {
-        Log.i(TAG, "anfang")
-        val dateFormat: DateFormat = DateFormat.getDateInstance()
-        val timeFormat: DateFormat = DateFormat.getTimeInstance()
+        // show important info of heart rate datapoint
+
+        testCounter++
         for (dp in dataSet.dataPoints) {
-            Log.i("History", "Data point:")
+            Log.i("History", "Data point:" + testCounter)
             Log.i("History", "\tType: " + dp.dataType.name)
             Log.i("History",
-                "\tStart: " + dateFormat.format(dp.getStartTime(java.util.concurrent.TimeUnit.MILLISECONDS))
-                    .toString() + " " + timeFormat.format(dp.getStartTime(java.util.concurrent.TimeUnit.MILLISECONDS))
+                "\tStart: " + Instant.ofEpochSecond(dp.getStartTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault())
+                    .toLocalDateTime().toString()
             )
             Log.i("History",
-                "\tEnd: " + dateFormat.format(dp.getEndTime(java.util.concurrent.TimeUnit.MILLISECONDS))
-                    .toString() + " " + timeFormat.format(dp.getStartTime(java.util.concurrent.TimeUnit.MILLISECONDS))
+                "\tEnd: " + Instant.ofEpochSecond(dp.getEndTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault())
+                    .toLocalDateTime().toString()
             )
             for (field in dp.dataType.fields) {
+                // bpm values saved in "fields" of datapoint
+                // loop over avg-bpm, max-bpm, min-bpm
                 Log.i(
                     "History", "\tField: " + field.name +
                             " Value: " + dp.getValue(field)
                 )
-                tvSteps.setText(dp.getValue(field).toString() + " steps")
             }
         }
     }
-    */
 
     private fun oAuthPermissionsApproved() =
     GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)
@@ -189,7 +195,7 @@ class MainActivity : AppCompatActivity() {
     private fun getGoogleAccount(): GoogleSignInAccount =
     GoogleSignIn.getAccountForExtension(this, fitnessOptions)
 
-    // gets automatically called sending login-request
+    // gets automatically called after sending login-request
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode === RESULT_OK) {
