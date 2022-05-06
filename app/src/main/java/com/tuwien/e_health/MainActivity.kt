@@ -7,6 +7,7 @@ import android.icu.util.Calendar
 import android.icu.util.ULocale
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,34 +33,26 @@ class MainActivity : AppCompatActivity() {
         .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
         .build()
 
-    private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
     private var testCounter = 0
+    private val RC_SIGNIN = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+       supportActionBar?.hide()
+       this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+           WindowManager.LayoutParams.FLAG_FULLSCREEN);
+       setContentView(R.layout.activity_main)
 
-
-        btnGoogleSignIn.setOnClickListener {
-            if(GoogleSignIn.getLastSignedInAccount(this) == null) {
-                signIn()
-            }
-        }
-
-        btnGoogleSignOut.setOnClickListener {
-            if(GoogleSignIn.getLastSignedInAccount(this) != null) {
-                logOut()
-                Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
-            }
-        }
 
         // TODO: Just for testing, remove later
         btnGoogleSteps.setOnClickListener {
             //val endTime =  LocalDateTime.now().atZone(ZoneId.systemDefault())
 
             // data for 1 day
-            var endTime = LocalDate.of(2022, 4, 30).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
+            var endTime =
+                LocalDate.of(2022, 4, 30).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
             val startTime = endTime.minusDays(1)
 
             /*
@@ -71,16 +64,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         // checks for logged account on startup, if not account, login
-        if(GoogleSignIn.getLastSignedInAccount(this) == null) {
+        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             signIn()
-        }else{
+        } else {
             //already logged in
         }
 
-
         val statisticsLineChartButton = findViewById<Button>(R.id.buttonLineChart)
         statisticsLineChartButton.setOnClickListener {
-            val Intent = Intent(this,StatisticsActivity::class.java)
+            val Intent = Intent(this, StatisticsActivity::class.java)
+            startActivity(Intent)
+        }
+        // Navigation to Settings
+        val settingsButton = findViewById<Button>(R.id.btnSettings)
+        settingsButton.setOnClickListener {
+            val Intent = Intent(this, SettingsActivity::class.java)
+            startActivity(Intent)
+        }
+        // Navigation to Statistics
+        val statisticsButton = findViewById<Button>(R.id.btnStatistics)
+        statisticsButton.setOnClickListener {
+            val Intent = Intent(this, StatisticsActivity::class.java)
+            startActivity(Intent)
+        }
+        // Navigation to Sports Game
+        val sportsGameButton = findViewById<Button>(R.id.btnSportGame)
+        sportsGameButton.setOnClickListener {
+            val Intent = Intent(this, SportsGameActivity::class.java)
             startActivity(Intent)
         }
     }
@@ -104,15 +114,6 @@ class MainActivity : AppCompatActivity() {
             RC_PERMISSION,
             getGoogleAccount(),
             fitnessOptions)
-    }
-
-    private fun logOut() {
-        // log out of Google Account
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .build()
-        val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        mGoogleSignInClient.signOut()
     }
 
     private fun accountInfo() {

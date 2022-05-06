@@ -4,13 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    tools:context=".StatisticsLineChartActivity">
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/statisticsLineChart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+    tools:context=".SportsGameActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

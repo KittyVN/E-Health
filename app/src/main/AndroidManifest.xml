@@ -19,13 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EHealth">
         <activity
+            android:name=".SportsGameActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".StatisticsActivity"
             android:exported="false"
-            android:screenOrientation="landscape"/>
-        <activity
-            android:name=".StatisticsLineChartActivity"
-            android:exported="false"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
