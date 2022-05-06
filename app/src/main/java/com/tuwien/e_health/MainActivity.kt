@@ -5,30 +5,23 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.icu.util.Calendar
-import android.icu.util.ULocale
+import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.FitnessActivities
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.*
 import com.google.android.gms.fitness.request.DataReadRequest
-import com.google.android.gms.fitness.request.SessionInsertRequest
-import com.google.android.gms.fitness.request.SessionReadRequest
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.DateFormat
 import java.time.*
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -46,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val RC_PERMISSION = 1
     private var testCounter = 0
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -92,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                RC_PERMISSION);
+                RC_PERMISSION)
         }
     }
 
@@ -103,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        val signInIntent = mGoogleSignInClient.getSignInIntent()
+        val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGNIN)
 
     }
@@ -164,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         if (account != null) {
             testCounter = 0
 
-            var bpmValues: MutableList<DataSet> = mutableListOf<DataSet>()
+            var bpmValues: MutableList<DataSet> = mutableListOf()
             Fitness.getHistoryClient(this, account)
                 .readData(readRequest)
                 .addOnSuccessListener { response ->
