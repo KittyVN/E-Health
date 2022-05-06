@@ -63,15 +63,16 @@ class MainActivity : AppCompatActivity() {
             //val endTime =  LocalDateTime.now().atZone(ZoneId.systemDefault())
 
             // data for 1 day
-            var endTime = LocalDate.of(2022, 4, 30).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
-            val startTime = endTime.minusDays(1)
+            var endTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
+            val startTime = endTime.minusHours(6)
 
             /*
             // data for 1 week
             var endTime = LocalDate.of(2022, 4, 29).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
             var startTime = endTime.minusWeeks(1)
             */
-            readHeartRateData(TimeUnit.DAYS, endTime, startTime)
+            readHeartRateData(TimeUnit.HOURS, endTime, startTime)
+            //readSixHourHeartRateData()
         }
 
         // checks for logged account on startup, if not account, login
@@ -175,6 +176,65 @@ class MainActivity : AppCompatActivity() {
                 }
 
         }
+    }
+
+    private fun readSixHourHeartRateData(): DataSet? {
+        // extract heart rate for the last six hours
+
+        val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
+        val startTime = endTime.minusHours(6)
+
+        var dataSetSixHours: DataSet? = null;
+
+        Log.i(TAG, "Range Start: $startTime")
+        Log.i(TAG, "Range End: $endTime")
+
+        // create read request
+        val readRequestHeartRate =
+            DataReadRequest.Builder()
+                .aggregate(DataType.TYPE_HEART_RATE_BPM)
+                .bucketByTime(1, TimeUnit.MINUTES)
+                .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(),
+                    TimeUnit.SECONDS
+                )
+                .build()
+
+        // create read request
+        val readRequestActivity =
+            DataReadRequest.Builder()
+                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT)
+                .bucketByTime(1, TimeUnit.MINUTES)
+                .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(),
+                    TimeUnit.SECONDS
+                )
+                .build()
+
+
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+
+        // do read request
+        if (account != null) {
+            testCounter = 0
+
+            var bpmValues: MutableList<DataSet> = mutableListOf()
+            Fitness.getHistoryClient(this, account)
+                .readData(readRequestHeartRate)
+                .addOnSuccessListener { response ->
+                    for (dataSet in response.buckets.flatMap { it.dataSets }) {
+                        // not every dataSet has dataPoint
+                        for (dp in dataSet.dataPoints) {
+                            bpmValues.add(dataSet)
+                        }
+                        dataSet.also { dataSetSixHours = it }
+                        showDataSet(dataSet)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "There was a problem getting the heart rate.", e)
+                }
+
+        }
+        return dataSetSixHours
     }
 
     private fun showDataSet(dataSet: DataSet) {
