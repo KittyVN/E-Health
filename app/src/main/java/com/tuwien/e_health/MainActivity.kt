@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
             // data for 1 day
             var endTime =
-                LocalDate.of(2022, 4, 30).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
+                LocalDate.of(2022, 5, 4).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
             val startTime = endTime.minusDays(1)
 
             /*
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             var endTime = LocalDate.of(2022, 4, 29).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
             var startTime = endTime.minusWeeks(1)
             */
-            readHeartRateData(TimeUnit.DAYS, endTime, startTime)
+            readHeartRateData(TimeUnit.HOURS, endTime, startTime)
         }
 
         // checks for logged account on startup, if not account, login
