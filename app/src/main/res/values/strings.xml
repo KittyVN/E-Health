@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">E-Health</string>
+    <string name="bar_chart">Bar Chart</string>
+    <string name="line_chart">lineChart</string>
 </resources>
