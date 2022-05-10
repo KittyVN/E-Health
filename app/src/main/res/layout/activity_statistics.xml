@@ -13,9 +13,21 @@
         android:layout_width="600dp"
         android:layout_height="300dp"
         android:layout_marginTop="16dp"
+        android:padding="5dp"
         app:layout_constraintEnd_toStartOf="@+id/btnGoForwardInTime"
         app:layout_constraintStart_toEndOf="@+id/btnGoBackInTime"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDaysDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="25dp"
+        android:text="Date"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statisticsLineChart" />
 
     <Button
         android:id="@+id/btnGoBackInTime"

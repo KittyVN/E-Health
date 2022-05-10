@@ -2,12 +2,15 @@ package com.tuwien.e_health
 
 import android.content.ContentValues
 import android.graphics.Color
+import android.graphics.Color.red
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -24,6 +27,7 @@ import com.google.android.gms.fitness.data.DataSet
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.request.DataReadRequest
 import java.time.*
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 
@@ -45,7 +49,6 @@ class StatisticsActivity : AppCompatActivity() {
     private var howFarBackForwardWeek = 0L
     private var isWeekActive = false
     private var isDayActive = false
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +73,7 @@ class StatisticsActivity : AppCompatActivity() {
                 setDataToLineChart(false)
             }
         }*/
+
         val btnLastDay = findViewById(R.id.btnLastDay) as Button
         btnLastDay.setOnClickListener{
             isDayActive = true
@@ -143,6 +147,9 @@ class StatisticsActivity : AppCompatActivity() {
         //remove description label
         lineChart.description.isEnabled = false
 
+        lineChart.extraBottomOffset =5f
+        lineChart.extraRightOffset=20f
+
         //add animation
         lineChart.animateX(1000, Easing.EaseInSine)
 
@@ -193,10 +200,14 @@ class StatisticsActivity : AppCompatActivity() {
 
 
             lineDataSetAVG.valueTextSize = 12f
-            lineDataSetAVG.setDrawFilled(true)
+           // lineDataSetAVG.setDrawFilled(true)
             lineDataSetAVG.setDrawValues(false)
             lineDataSetAVG.setDrawCircles(false)
             lineDataSetAVG.setDrawCircleHole(false)
+            lineDataSetAVG.lineWidth = 2f
+            lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
+            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
 
             val dataSets: ArrayList<ILineDataSet> = ArrayList()
             dataSets.add(lineDataSetAVG)
@@ -236,33 +247,32 @@ class StatisticsActivity : AppCompatActivity() {
             val lineDataSetMIN = LineDataSet(entriesMIN,"Minimum")
             val lineDataSetMAX = LineDataSet(entriesMAX,"Maximum")
 
-            lineDataSetAVG.color = R.color.purple_200
-
-            lineDataSetMIN.color = R.color.purple_500
-
-            lineDataSetMAX.color = R.color.purple_700
-
-            lineDataSetAVG.setDrawFilled(true)
-            lineDataSetAVG.fillColor = R.color.purple_500
-
-            lineDataSetAVG.fillColor = R.color.purple_200
-            lineDataSetMIN.setDrawFilled(true)
-
-            lineDataSetMIN.setCircleColor(R.color.purple_700)
-
-            lineDataSetAVG.setDrawFilled(true)
             lineDataSetAVG.setDrawValues(false)
             lineDataSetAVG.setDrawCircles(false)
 
-            lineDataSetMIN.setDrawFilled(true)
             lineDataSetMIN.setDrawValues(false)
             lineDataSetMIN.setDrawCircles(false)
 
-            lineDataSetMAX.setDrawFilled(true)
             lineDataSetMAX.setDrawValues(false)
             lineDataSetMAX.setDrawCircles(false)
 
+            lineDataSetAVG.lineWidth = 2f
+            lineDataSetAVG.valueTextSize = 15f
+            lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
+            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
 
+            lineDataSetMIN.lineWidth = 2f
+            lineDataSetMIN.valueTextSize = 15f
+            lineDataSetMIN.mode = LineDataSet.Mode.CUBIC_BEZIER
+            lineDataSetMIN.color = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetMIN.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+
+            lineDataSetMAX.lineWidth = 2f
+            lineDataSetMAX.valueTextSize = 15f
+            lineDataSetMAX.mode = LineDataSet.Mode.CUBIC_BEZIER
+            lineDataSetMAX.color = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetMAX.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
 
             val dataSets: ArrayList<ILineDataSet> = ArrayList()
             dataSets.add(lineDataSetAVG)
@@ -290,6 +300,12 @@ class StatisticsActivity : AppCompatActivity() {
                 val yesterday = today.minusDays(1)
                 Log.i("Today:", today.toString())
                 Log.i("Yesterday:", yesterday.toString())
+
+                var formatter = DateTimeFormatter.ofPattern("dd.MMMM")
+                var formattedDate = yesterday.format(formatter)
+                findViewById<TextView>(R.id.tvDaysDate).apply {
+                    text = formattedDate
+                }
                 readHeartRateData(TimeUnit.HOURS,today,yesterday,true)
             } else {
                 //data for 1 week
@@ -298,6 +314,10 @@ class StatisticsActivity : AppCompatActivity() {
                 val lastWeek = today.minusWeeks(1)
                 Log.i("Today:", today.toString())
                 Log.i("LastWeek:", lastWeek.toString())
+
+                findViewById<TextView>(R.id.tvDaysDate).apply {
+                    text = ""
+                }
                 readHeartRateData(TimeUnit.DAYS,today,lastWeek,false)
             }
 
@@ -356,6 +376,7 @@ class StatisticsActivity : AppCompatActivity() {
                 //  "\tEnd: " + Instant.ofEpochSecond(dp.getEndTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault())
                 //    .toLocalDateTime().toString()
                 //)
+
                 var tempScore = Score(Instant.ofEpochSecond(dp.getStartTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault()).toLocalDateTime().toString().substringAfter("T").substringBefore(":"),0f,0f,0f)
                 for (field in dp.dataType.fields) {
                     // bpm values saved in "fields" of datapoint
@@ -393,8 +414,12 @@ class StatisticsActivity : AppCompatActivity() {
                 //  "\tEnd: " + Instant.ofEpochSecond(dp.getEndTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault())
                 //    .toLocalDateTime().toString()
                 //)
+                var formatter = DateTimeFormatter.ofPattern("dd.MMMM")
+                var time = Instant.ofEpochSecond(dp.getStartTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault()).toLocalDateTime()
+                var formattedTime = time.format(formatter)
 
-                var tempScore = Score(Instant.ofEpochSecond(dp.getStartTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault()).toLocalDateTime().toString().substringBefore("T"),0f,0f,0f)
+                var oldDate = Instant.ofEpochSecond(dp.getStartTime(TimeUnit.SECONDS)).atZone(ZoneId.systemDefault()).toLocalDateTime().toString().substringBefore("T")
+                var tempScore = Score(formattedTime,0f,0f,0f)
                 for (field in dp.dataType.fields) {
                     // bpm values saved in "fields" of datapoint
                     // loop over avg-bpm, max-bpm, min-bpm
