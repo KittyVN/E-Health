@@ -265,8 +265,7 @@ class MainActivity : AppCompatActivity() {
     private fun read6hActivities() {
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        // TODO: change to 6 hours!!
-        val startTime = endTime.minusWeeks(1)
+        val startTime = endTime.minusHours(6)
 
         Log.i(TAG, "Range Start: $startTime")
         Log.i(TAG, "Range End: $endTime")
