@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             var startTime = endTime.minusWeeks(1)
             */
             //readHeartRateData(TimeUnit.HOURS, endTime, startTime)
-            //readSixHourHeartRateData()
             read6hActivities()
             //Log.i("Test","Average BPM over the last 6 hours: " + average6hHeartRate)
 
@@ -262,6 +261,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // start of 6 hour heart rate data functions
     private fun read6hActivities() {
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -320,8 +320,7 @@ class MainActivity : AppCompatActivity() {
     private fun read6hHeartRate(activityValues: MutableList<Pair<LocalDateTime,LocalDateTime>>) {
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        // TODO: change to 6 hours!!
-        val startTime = endTime.minusWeeks(1)
+        val startTime = endTime.minusHours(6)
 
         // create heart rate read request
         val readRequestHeartRate =
@@ -387,6 +386,7 @@ class MainActivity : AppCompatActivity() {
         Log.i("Test","Average BPM over the last 6 hours: " + average6hHeartRate)
 
     }
+    // end of 6 hour heart rate data functions
 
 
 
