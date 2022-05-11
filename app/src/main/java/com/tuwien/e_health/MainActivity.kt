@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
             */
             readHeartRateData(TimeUnit.HOURS, endTime, startTime)
             //readHeartRateData(TimeUnit.HOURS, endTime, startTime)
-            //readSixHourHeartRateData()
             read6hActivities()
             //Log.i("Test","Average BPM over the last 6 hours: " + average6hHeartRate)
 
@@ -189,91 +188,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun readSixHourHeartRateData() {
-        // extract heart rate for the last six hours
-
-        val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        val startTime = endTime.minusHours(6)
-
-        Log.i(TAG, "Range Start: $startTime")
-        Log.i(TAG, "Range End: $endTime")
-
-        // create heart rate read request
-        val readRequestHeartRate =
-            DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_HEART_RATE_BPM)
-                .bucketByTime(1, TimeUnit.MINUTES)
-                .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(),
-                    TimeUnit.SECONDS
-                )
-                .build()
-
-        // create activity read request
-        val readRequestActivity =
-            DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT)
-                .bucketByActivitySegment(20, TimeUnit.MINUTES)
-                .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(),
-                    TimeUnit.SECONDS
-                )
-                .build()
-
-
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-
-        // do heart rate read request
-        if (account != null) {
-            testCounter = 0
-
-            var bpmValues: MutableList<DataSet> = mutableListOf()
-
-            Fitness.getHistoryClient(this, account)
-                .readData(readRequestHeartRate)
-                .addOnSuccessListener { response ->
-                    for (dataSet in response.buckets.flatMap { it.dataSets }) {
-                        // not every dataSet has dataPoint
-                        for (dp in dataSet.dataPoints) {
-                            bpmValues.add(dataSet)
-                        }
-                        showDataSet(dataSet)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "There was a problem getting the heart rate.", e)
-                }
-
-        }
-
-        // do activity read request
-        if (account != null) {
-            testCounter = 0
-
-            var bpmValues: MutableList<DataSet> = mutableListOf()
-
-            Fitness.getHistoryClient(this, account)
-                .readData(readRequestActivity)
-                .addOnSuccessListener { response ->
-                    for (dataSet in response.buckets.flatMap { it.dataSets }) {
-                        // not every dataSet has dataPoint
-                        for (dp in dataSet.dataPoints) {
-                            bpmValues.add(dataSet)
-                        }
-                        showDataSet(dataSet)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "There was a problem getting the heart rate.", e)
-                }
-
-        }
-
-    }
-
+    // start of 6 hour heart rate data functions
     private fun read6hActivities() {
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        // TODO: change to 6 hours!!
-        val startTime = endTime.minusWeeks(1)
+        val startTime = endTime.minusHours(6)
 
         Log.i(TAG, "Range Start: $startTime")
         Log.i(TAG, "Range End: $endTime")
@@ -328,8 +247,7 @@ class MainActivity : AppCompatActivity() {
     private fun read6hHeartRate(activityValues: MutableList<Pair<LocalDateTime,LocalDateTime>>) {
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        // TODO: change to 6 hours!!
-        val startTime = endTime.minusWeeks(1)
+        val startTime = endTime.minusHours(6)
 
         // create heart rate read request
         val readRequestHeartRate =
@@ -395,6 +313,7 @@ class MainActivity : AppCompatActivity() {
         Log.i("Test","Average BPM over the last 6 hours: " + average6hHeartRate)
 
     }
+    // end of 6 hour heart rate data functions
 
 
 
