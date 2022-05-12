@@ -4,6 +4,7 @@ package com.tuwien.e_health
 import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -40,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
     private var testCounter = 0
-    private var average6hHeartRate = 0.0;
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -296,17 +296,65 @@ class MainActivity : AppCompatActivity() {
             onlyBpmValues.add(pair.second)
         }
 
-        average6hHeartRate = onlyBpmValues.toDoubleArray().average()
+        val average6hHeartRate = onlyBpmValues.toDoubleArray().average()
         Log.i(TAG, "Avg bpm over last 6 hours: $average6hHeartRate")
 
         updateMainScreen(average6hHeartRate)
 
     }
 
-    private fun updateMainScreen(restingHeartRate: Double) {
-        // update background and gifs of main-screen due to heart rate
+    private fun updateMainScreen(rhr: Double) {
+        // update background and gifs of main-screen due to resting-heart-rate rhr
+        var rhr = 54.0
+        if(rhr < 60) {
+            // best state
+            setBackground(1)
+            setDog(1)
+            setCat(1)
+            setRabbit(1)
+        }else if(rhr in 60.0..79.9) {
+            // good state
+            setBackground(2)
+            setDog(2)
+            setCat(2)
+            setRabbit(2)
+        }else if(rhr in 80.0..99.9) {
+            // semi-good state
+            setBackground(3)
+            setDog(3)
+            setCat(3)
+            setRabbit(3)
+        }else if(rhr in 100.0..179.9) {
+            // bad state
+            setBackground(4)
+            setDog(4)
+            setCat(4)
+            setRabbit(4)
+        }else if(rhr >= 180) {
+            // worst
+            setBackground(5)
+            setDog(5)
+            setCat(5)
+            setRabbit(5)
+        }
 
+    }
 
+    private fun setBackground(int: Int){
+        val resId = resources.getIdentifier("bg_$int", "drawable", packageName)
+        backgroundImage.setImageResource(resId);
+    }
+    private fun setDog(int: Int){
+        val resId = resources.getIdentifier("dog_$int", "drawable", packageName)
+        dogGIF.setImageResource(resId);
+    }
+    private fun setCat(int: Int){
+        val resId = resources.getIdentifier("cat_$int", "drawable", packageName)
+        catGIF.setImageResource(resId);
+    }
+    private fun setRabbit(int: Int){
+        val resId = resources.getIdentifier("rabbit_$int", "drawable", packageName)
+        rabbitGIF.setImageResource(resId);
     }
 
     private fun showDataSet(dataSet: DataSet) {
