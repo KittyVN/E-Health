@@ -53,22 +53,11 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: Just for testing, remove later
         btnGoogleSteps.setOnClickListener {
-            //val endTime =  LocalDateTime.now().atZone(ZoneId.systemDefault())
-
             // data for 1 day
-            var endTime = LocalDate.of(2022, 5, 7).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
-            val startTime = endTime.minusHours(6)
-
-            /*
-            // data for 1 week
-            var endTime = LocalDate.of(2022, 4, 29).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
-            var startTime = endTime.minusWeeks(1)
-            */
-            readHeartRateData(TimeUnit.HOURS, endTime, startTime)
+            //var endTime = LocalDate.of(2022, 5, 7).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
+            //val startTime = endTime.minusHours(6)
             //readHeartRateData(TimeUnit.HOURS, endTime, startTime)
             read6hActivities()
-            //Log.i("Test","Average BPM over the last 6 hours: " + average6hHeartRate)
-
         }
 
         // checks for logged account on startup, if not account, login
@@ -86,26 +75,20 @@ class MainActivity : AppCompatActivity() {
                 RC_PERMISSION)
         }
 
-        val statisticsLineChartButton = findViewById<Button>(R.id.buttonLineChart)
-        statisticsLineChartButton.setOnClickListener {
-            val Intent = Intent(this, StatisticsActivity::class.java)
-            startActivity(Intent)
-        }
         // Navigation to Settings
-        val settingsButton = findViewById<Button>(R.id.btnSettings)
-        settingsButton.setOnClickListener {
+        btnSettings.setOnClickListener {
             val Intent = Intent(this, SettingsActivity::class.java)
             startActivity(Intent)
         }
+
         // Navigation to Statistics
-        val statisticsButton = findViewById<Button>(R.id.btnStatistics)
-        statisticsButton.setOnClickListener {
+        btnStatistics.setOnClickListener {
             val Intent = Intent(this, StatisticsActivity::class.java)
             startActivity(Intent)
         }
+
         // Navigation to Sports Game
-        val sportsGameButton = findViewById<Button>(R.id.btnSportGame)
-        sportsGameButton.setOnClickListener {
+        btnSportGame.setOnClickListener {
             val Intent = Intent(this, SportsGameActivity::class.java)
             startActivity(Intent)
         }
@@ -188,12 +171,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // start of 6 hour heart rate data functions
     private fun read6hActivities() {
+        // extract activities for given time period
 
+        accountInfo()
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
         val startTime = endTime.minusHours(6)
 
+        Log.i(TAG, "Reading activities of last 6h")
         Log.i(TAG, "Range Start: $startTime")
         Log.i(TAG, "Range End: $endTime")
 
@@ -215,8 +200,6 @@ class MainActivity : AppCompatActivity() {
         // do activity read request
         if (account != null) {
             testCounter = 0
-
-
             Fitness.getHistoryClient(this, account)
                 .readData(readRequestActivity)
                 .addOnSuccessListener { response ->
@@ -245,6 +228,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun read6hHeartRate(activityValues: MutableList<Pair<LocalDateTime,LocalDateTime>>) {
+        // extract heart rate for given time period
+
+        Log.i(TAG, "Reading heart rate of last 6h")
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
         val startTime = endTime.minusHours(6)
@@ -264,9 +250,7 @@ class MainActivity : AppCompatActivity() {
         // do heart rate read request
         if (account != null) {
             testCounter = 0
-
             var bpmValues: MutableList<Pair<LocalDateTime,Double>> = mutableListOf()
-
             Fitness.getHistoryClient(this, account)
                 .readData(readRequestHeartRate)
                 .addOnSuccessListener { response ->
@@ -278,8 +262,8 @@ class MainActivity : AppCompatActivity() {
                                     .toLocalDateTime(),
                                 dp.getValue(dp.dataType.fields[0]).toString().toDouble()
                             )
-
                             bpmValues.add(bpmValue)
+                            //showDataSet(dataSet)
                         }
                     }
                     compute6hHeartRate(activityValues,bpmValues)
@@ -291,14 +275,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun compute6hHeartRate(activityValues: MutableList<Pair<LocalDateTime,LocalDateTime>>, bpmValues: MutableList<Pair<LocalDateTime,Double>>){
+        // calculate resting heart rate with activities- and bpm-list
 
-        if(activityValues.isNotEmpty()){
+        Log.i(TAG, "Calculate resting heart rate of last 6h")
 
-            activityValues.forEach { (start,end) ->
-                bpmValues.forEach { (time,value) ->
-                    if(time > start && time <= end){
-                        bpmValues.remove(Pair(time,value))
-                    }
+        Log.i(TAG, activityValues.size.toString())
+        Log.i(TAG, bpmValues.size.toString())
+        activityValues.forEach { (start,end) ->
+            //Log.i(TAG, "start: " + start)
+            //Log.i(TAG, "end: " + end)
+            val bpmIterator = bpmValues.iterator()
+            while(bpmIterator.hasNext()){
+                val bpmPair = bpmIterator.next()
+                if(bpmPair.first > start && bpmPair.first <= end){
+                    //Log.i(TAG, "in Activity: " + bpmPair.first)
+                    bpmIterator.remove()
                 }
             }
         }
@@ -310,12 +301,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         average6hHeartRate = onlyBpmValues.toDoubleArray().average()
-        Log.i("Test","Average BPM over the last 6 hours: " + average6hHeartRate)
+        Log.i(TAG, "Avg bpm over last 6 hours: $average6hHeartRate")
 
     }
-    // end of 6 hour heart rate data functions
-
-
 
     private fun showDataSet(dataSet: DataSet) {
         // show important info of heart rate datapoint
