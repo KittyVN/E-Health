@@ -50,16 +50,6 @@ class MainActivity : AppCompatActivity() {
            WindowManager.LayoutParams.FLAG_FULLSCREEN);
        setContentView(R.layout.activity_main)
 
-
-        // TODO: Just for testing, remove later
-        btnGoogleSteps.setOnClickListener {
-            // data for 1 day
-            //var endTime = LocalDate.of(2022, 5, 7).atTime(23, 59, 59).atZone(ZoneId.systemDefault())
-            //val startTime = endTime.minusHours(6)
-            //readHeartRateData(TimeUnit.HOURS, endTime, startTime)
-            read6hActivities()
-        }
-
         // checks for logged account on startup, if not account, login
         if(GoogleSignIn.getLastSignedInAccount(this) == null) {
             signIn()
@@ -92,6 +82,12 @@ class MainActivity : AppCompatActivity() {
             val Intent = Intent(this, SportsGameActivity::class.java)
             startActivity(Intent)
         }
+    }
+
+    // reload pond data on every start
+    override fun onStart() {
+        super.onStart()
+        read6hActivities()
     }
 
     private fun signIn() {
@@ -279,8 +275,8 @@ class MainActivity : AppCompatActivity() {
 
         Log.i(TAG, "Calculate resting heart rate of last 6h")
 
-        Log.i(TAG, activityValues.size.toString())
-        Log.i(TAG, bpmValues.size.toString())
+        Log.i(TAG, "activities: " + activityValues.size)
+        Log.i(TAG, "bpm values: " + bpmValues.size)
         activityValues.forEach { (start,end) ->
             //Log.i(TAG, "start: " + start)
             //Log.i(TAG, "end: " + end)
@@ -302,6 +298,14 @@ class MainActivity : AppCompatActivity() {
 
         average6hHeartRate = onlyBpmValues.toDoubleArray().average()
         Log.i(TAG, "Avg bpm over last 6 hours: $average6hHeartRate")
+
+        updateMainScreen(average6hHeartRate)
+
+    }
+
+    private fun updateMainScreen(restingHeartRate: Double) {
+        // update background and gifs of main-screen due to heart rate
+
 
     }
 

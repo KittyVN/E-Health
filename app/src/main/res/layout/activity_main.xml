@@ -28,26 +28,57 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_height="0dp"/>
 -->
-    <Button
-        android:id="@+id/buttonLineChart"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="@color/cardview_light_background"
-        android:text="@string/line_chart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGoogleSteps" />
 
-    <Button
-        android:id="@+id/btnGoogleSteps"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="@color/cardview_light_background"
-        android:text="Fetch Data"
-        android:textColor="#fff"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:src="@drawable/bg_11"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:src="@drawable/dog_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:src="@drawable/cat_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:src="@drawable/mole"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:src="@drawable/rabbit_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <Button
         android:id="@+id/btnSettings"
