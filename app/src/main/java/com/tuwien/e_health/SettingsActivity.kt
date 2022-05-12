@@ -1,6 +1,7 @@
 package com.tuwien.e_health
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -63,6 +64,19 @@ class SettingsActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        setInfoText()
+    }
+
+    private fun setInfoText() {
+        val acct = GoogleSignIn.getLastSignedInAccount(this)
+        if(acct != null){
+            tvAccountName.setText("Hello " + acct.displayName)
+            tvAccountEmail.setText(acct.email)
+        }
+    }
+
     private fun reqPermissions() {
         // request Permissions specified in fitnessOptions
 
@@ -78,11 +92,12 @@ class SettingsActivity : AppCompatActivity() {
 
         val acct = GoogleSignIn.getLastSignedInAccount(this)
         if (acct != null) {
-            Log.i(ContentValues.TAG, "account signed in")
-            Log.i(ContentValues.TAG, "personEmail: " + acct.email)
-            Log.i(ContentValues.TAG, "personId: " + acct.id)
+            Log.i(TAG, "account signed in")
+            Log.i(TAG, "personEmail: " + acct.email)
+            Log.i(TAG, "personName: " + acct.displayName)
+            Log.i(TAG, "personId: " + acct.id)
         }else{
-            Log.i(ContentValues.TAG, "no account")
+            Log.i(TAG, "no account")
         }
     }
 
@@ -130,6 +145,7 @@ class SettingsActivity : AppCompatActivity() {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             accountInfo()
+            setInfoText()
         } catch (e: ApiException) {
             Log.w(ContentValues.TAG, "signInResult:failed code=" + e.statusCode)
         }

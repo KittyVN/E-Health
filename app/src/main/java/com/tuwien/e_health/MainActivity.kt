@@ -2,6 +2,7 @@ package com.tuwien.e_health
 
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -118,6 +119,7 @@ class MainActivity : AppCompatActivity() {
         if (acct != null) {
             Log.i(TAG, "account signed in")
             Log.i(TAG, "personEmail: " + acct.email)
+            Log.i(TAG, "personName: " + acct.displayName)
             Log.i(TAG, "personId: " + acct.id)
         }else{
             Log.i(TAG, "no account")
@@ -306,7 +308,10 @@ class MainActivity : AppCompatActivity() {
     private fun updateMainScreen(rhr: Double) {
         // update background and gifs of main-screen due to resting-heart-rate rhr
         var rhr = 54.0
-        if(rhr < 60) {
+        if(rhr <= 0 || rhr.isNaN()) {
+            setBackground(0)
+        }
+        else if(rhr in 1.0..59.9) {
             // best state
             setBackground(1)
             setDog(1)
@@ -331,7 +336,7 @@ class MainActivity : AppCompatActivity() {
             setCat(4)
             setRabbit(4)
         }else if(rhr >= 180) {
-            // worst
+            // worst state
             setBackground(5)
             setDog(5)
             setCat(5)
