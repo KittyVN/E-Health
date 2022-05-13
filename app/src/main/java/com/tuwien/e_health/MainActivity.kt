@@ -313,31 +313,31 @@ class MainActivity : AppCompatActivity() {
         }
         else if(rhr in 1.0..59.9) {
             // best state
-            setBackground(1)
+            setBackground(11)
             setDog(1)
             setCat(1)
             setRabbit(1)
         }else if(rhr in 60.0..79.9) {
             // good state
-            setBackground(2)
+            setBackground(21)
             setDog(2)
             setCat(2)
             setRabbit(2)
         }else if(rhr in 80.0..99.9) {
             // semi-good state
-            setBackground(3)
+            setBackground(31)
             setDog(3)
             setCat(3)
             setRabbit(3)
         }else if(rhr in 100.0..179.9) {
             // bad state
-            setBackground(4)
+            setBackground(41)
             setDog(4)
             setCat(4)
             setRabbit(4)
         }else if(rhr >= 180) {
             // worst state
-            setBackground(5)
+            setBackground(51)
             setDog(5)
             setCat(5)
             setRabbit(5)
