@@ -55,8 +55,11 @@ class SettingsActivity : AppCompatActivity() {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
                 textBtnSignInOut.text = "Log out"
                 signIn()
+
             } else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
                 textBtnSignInOut.text = "Log in"
+                tvAccountName.text = "No account singed in"
+                tvAccountEmail.text = "-"
                 logOut()
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
             }

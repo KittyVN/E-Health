@@ -4,19 +4,23 @@ package com.tuwien.e_health
 import android.Manifest
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
+import android.view.*
 import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.fitness.Fitness
@@ -27,6 +31,7 @@ import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
     private var testCounter = 0
+    var toggle = false
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +89,35 @@ class MainActivity : AppCompatActivity() {
             val Intent = Intent(this, SportsGameActivity::class.java)
             startActivity(Intent)
         }
+
+        greenLayout.setOnClickListener {
+            toggle = !toggle
+            showButtons(toggle)
+            if(toggle) {
+                arrow1.setText(">")
+                arrow2.setText(">")
+            }else{
+                arrow1.setText("<")
+                arrow2.setText("<")
+            }
+        }
+
+        val parent = findViewById<ViewGroup>(R.id.parent)
+        parent.setOnTouchListener(object : OnSwipeTouchListener(this@MainActivity) {
+            override fun onSwipeLeft() {
+                super.onSwipeLeft()
+                showButtons(true)
+                arrow1.setText(">")
+                arrow2.setText(">")
+            }
+
+            override fun onSwipeRight() {
+                super.onSwipeLeft()
+                showButtons(false)
+                arrow1.setText("<")
+                arrow2.setText("<")
+            }
+        })
     }
 
     // reload pond data on every start
@@ -416,4 +451,98 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun showButtons(show: Boolean) {
+        Log.i(TAG, "test")
+        //al redLayout = findViewById<View>(R.id.redLayout)
+        val parent = findViewById<ViewGroup>(R.id.parent)
+        val transition: Transition = Slide(Gravity.RIGHT)
+        transition.duration = 300
+        //transition.addTarget(R.id.redLayout)
+        transition.addTarget(R.id.btnStatistics)
+        transition.addTarget(R.id.btnSettings)
+        transition.addTarget(R.id.btnSportGame)
+        TransitionManager.beginDelayedTransition(parent, transition)
+        //redLayout.visibility = if (show) View.VISIBLE else View.GONE
+        btnStatistics.visibility = if (show) View.VISIBLE else View.GONE
+        btnSettings.visibility = if (show) View.VISIBLE else View.GONE
+        btnSportGame.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    internal open class OnSwipeTouchListener(c: Context?) :
+        View.OnTouchListener {
+        private val gestureDetector: GestureDetector
+        override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+            return gestureDetector.onTouchEvent(motionEvent)
+        }
+        private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+            private val SWIPE_THRESHOLD: Int = 100
+            private val SWIPE_VELOCITY_THRESHOLD: Int = 100
+            override fun onDown(e: MotionEvent): Boolean {
+                return true
+            }
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                onClick()
+                return super.onSingleTapUp(e)
+            }
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                onDoubleClick()
+                return super.onDoubleTap(e)
+            }
+            override fun onLongPress(e: MotionEvent) {
+                onLongClick()
+                super.onLongPress(e)
+            }
+            override fun onFling(
+                e1: MotionEvent,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                try {
+                    val diffY = e2.y - e1.y
+                    val diffX = e2.x - e1.x
+                    if (abs(diffX) > abs(diffY)) {
+                        if (abs(diffX) > SWIPE_THRESHOLD && abs(
+                                velocityX
+                            ) > SWIPE_VELOCITY_THRESHOLD
+                        ) {
+                            if (diffX > 0) {
+                                onSwipeRight()
+                            }
+                            else {
+                                onSwipeLeft()
+                            }
+                        }
+                    }
+                    else {
+                        if (abs(diffY) > SWIPE_THRESHOLD && abs(
+                                velocityY
+                            ) > SWIPE_VELOCITY_THRESHOLD
+                        ) {
+                            if (diffY < 0) {
+                                onSwipeUp()
+                            }
+                            else {
+                                onSwipeDown()
+                            }
+                        }
+                    }
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
+                }
+                return false
+            }
+        }
+        open fun onSwipeRight() {}
+        open fun onSwipeLeft() {}
+        open fun onSwipeUp() {}
+        open fun onSwipeDown() {}
+        private fun onClick() {}
+        private fun onDoubleClick() {}
+        private fun onLongClick() {}
+        init {
+            gestureDetector = GestureDetector(c, GestureListener())
+        }
+    }
 }
