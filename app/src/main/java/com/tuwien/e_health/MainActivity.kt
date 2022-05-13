@@ -120,8 +120,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // reload pond data on every start
+
     override fun onStart() {
+        // reload pond data on every start
+
         super.onStart()
         read6hActivities()
     }
@@ -446,6 +448,7 @@ class MainActivity : AppCompatActivity() {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             accountInfo()
+            read6hActivities()
         } catch (e: ApiException) {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
@@ -453,17 +456,15 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun showButtons(show: Boolean) {
-        Log.i(TAG, "test")
-        //al redLayout = findViewById<View>(R.id.redLayout)
+        // slide  animation for buttons on swipe
+
         val parent = findViewById<ViewGroup>(R.id.parent)
         val transition: Transition = Slide(Gravity.RIGHT)
         transition.duration = 300
-        //transition.addTarget(R.id.redLayout)
         transition.addTarget(R.id.btnStatistics)
         transition.addTarget(R.id.btnSettings)
         transition.addTarget(R.id.btnSportGame)
         TransitionManager.beginDelayedTransition(parent, transition)
-        //redLayout.visibility = if (show) View.VISIBLE else View.GONE
         btnStatistics.visibility = if (show) View.VISIBLE else View.GONE
         btnSettings.visibility = if (show) View.VISIBLE else View.GONE
         btnSportGame.visibility = if (show) View.VISIBLE else View.GONE
