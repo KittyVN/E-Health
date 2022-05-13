@@ -4,10 +4,16 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_main.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/button_bar.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_auto_graph_24.xml" value="0.1" />
+        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_mood_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_sports_handball_24.xml" value="0.1" />
+        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_outline_info_24.xml" value="0.1" />
+        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/info_btn.xml" value="0.1" />
+        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/rounded_button.xml" value="0.1" />
+        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/smiley.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_settings.xml" value="0.17831813576494426" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_statistics.xml" value="0.14266304347826086" />

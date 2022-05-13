@@ -2,19 +2,20 @@ package com.tuwien.e_health
 
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val RC_PERMISSION = 1
     private var testCounter = 0
     var toggle = false
+    private var restingHeartRate = -1.0
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +92,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent)
         }
 
+        // opens popup overlay for resting heart rate info message
+        btnInfo.setOnClickListener{
+            showPopup()
+        }
+
+        // toggle buttons and arrows on button bar whenever its clicked
         greenLayout.setOnClickListener {
             toggle = !toggle
             showButtons(toggle)
@@ -102,6 +110,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // toggle buttons and arrows on button bar at swipe
         val parent = findViewById<ViewGroup>(R.id.parent)
         parent.setOnTouchListener(object : OnSwipeTouchListener(this@MainActivity) {
             override fun onSwipeLeft() {
@@ -337,7 +346,7 @@ class MainActivity : AppCompatActivity() {
 
         val average6hHeartRate = onlyBpmValues.toDoubleArray().average()
         Log.i(TAG, "Avg bpm over last 6 hours: $average6hHeartRate")
-
+        restingHeartRate = average6hHeartRate
         updateMainScreen(average6hHeartRate)
 
     }
@@ -468,6 +477,59 @@ class MainActivity : AppCompatActivity() {
         btnStatistics.visibility = if (show) View.VISIBLE else View.GONE
         btnSettings.visibility = if (show) View.VISIBLE else View.GONE
         btnSportGame.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    private fun showPopup() {
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(" ")
+        builder.setPositiveButton("Ok", null)
+        var messageBasic = "Your resting heart rate of the past six hours is $restingHeartRate. "
+        var messageAdvanced = ""
+
+        if(restingHeartRate <= 0 || restingHeartRate.isNaN()) {
+            // no rhr detected
+
+            messageAdvanced = "Unfortunately we could not detect a heart rate. Maybe check your Google Fit Account."
+            builder.setIcon(R.drawable.ic_baseline_help_outline_24)
+        }
+        else if(restingHeartRate in 1.0..59.9) {
+            // best state
+
+            messageAdvanced = "This is a extremely good value (<60). Either you were sleeping or your heart is very well trained."
+            builder.setIcon(R.drawable.ic_baseline_mood_24)
+        }else if(restingHeartRate in 60.0..79.9) {
+            // good state
+
+            messageAdvanced = "This is a very good value (60 - 80). Seems like you are very relaxed."
+            builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_alt_24)
+        }else if(restingHeartRate in 80.0..99.9) {
+
+            // semi-good state
+            messageAdvanced = "This is a fairly decent resting heart rate (80 - 100). Try to get into the area of 60 - 80."
+            builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_24)
+        }else if(restingHeartRate in 100.0..179.9) {
+            // bad
+
+            messageAdvanced = "A resting heart rate over 100 might be an indicator for high stress. If your heart rate is over 100 for a very long time you might want to get yourself checked by a professional."
+            builder.setIcon(R.drawable.ic_baseline_sentiment_dissatisfied_24)
+        }else if(restingHeartRate >= 180) {
+            // worst state
+
+            messageAdvanced = "A resting heart rate over 180 is extremely bad. You should get yourself checked by a professional very soon."
+            builder.setIcon(R.drawable.ic_baseline_mood_bad_24)
+        }
+
+        builder.setMessage(messageBasic + messageAdvanced)
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+        val okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        with(okButton) {
+            setPadding(0, 0, 20, 0)
+            setTextColor(Color.BLACK)
+        }
     }
 
     internal open class OnSwipeTouchListener(c: Context?) :

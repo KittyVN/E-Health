@@ -88,7 +88,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="100dp"
         android:layout_marginRight="30dp"
-        android:background="#8BC34A"
+        android:background="@drawable/rounded_button"
         android:drawableBottom="@drawable/ic_baseline_settings_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -100,7 +100,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="30dp"
-        android:background="#8BC34A"
+        android:background="@drawable/rounded_button"
         android:drawableBottom="@drawable/ic_baseline_auto_graph_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSettings"
@@ -112,7 +112,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="30dp"
-        android:background="#8BC34A"
+        android:background="@drawable/rounded_button"
         android:drawableBottom="@drawable/ic_baseline_sports_handball_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStatistics"
@@ -123,13 +123,12 @@
         android:id="@+id/greenLayout"
         android:layout_width="30px"
         android:layout_height="200dp"
-        android:background="#8BC34A"
+        android:background="@drawable/button_bar"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         >
-
     </LinearLayout>
 
     <TextView
@@ -159,5 +158,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnInfo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/info_btn"
+        android:drawableBottom="@drawable/ic_outline_info_24"
+        android:text="i"
+        android:textColor="#fff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
