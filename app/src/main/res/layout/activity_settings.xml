@@ -44,16 +44,16 @@
 
         />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSignInOut"
         android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginRight="30dp"
-        android:background="@color/cardview_light_background"
-        android:text="Log out"
-        android:drawableTop="@drawable/ic_baseline_person_24"
+        android:background="@drawable/rounded_button"
+        android:drawableLeft="@drawable/ic_baseline_person_24"
         android:textColor="#fff"
+        android:text="Log out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

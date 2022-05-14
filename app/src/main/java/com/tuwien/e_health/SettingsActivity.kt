@@ -46,7 +46,7 @@ class SettingsActivity : AppCompatActivity() {
         val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
 
         if(GoogleSignIn.getLastSignedInAccount(this) == null) {
-            textBtnSignInOut.text = "Log in"
+            textBtnSignInOut.text = "Log \n in"
         } else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
             textBtnSignInOut.text = "Log out"
         }
@@ -57,7 +57,7 @@ class SettingsActivity : AppCompatActivity() {
                 signIn()
 
             } else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
-                textBtnSignInOut.text = "Log in"
+                textBtnSignInOut.text = "Log \n in"
                 tvAccountName.text = "No account singed in"
                 tvAccountEmail.text = "-"
                 logOut()
