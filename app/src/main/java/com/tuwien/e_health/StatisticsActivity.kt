@@ -95,6 +95,8 @@ class StatisticsActivity : AppCompatActivity() {
         btnLastDay.setOnClickListener{
             isDayActive = true
             isWeekActive = false
+            btnLastDay.setBackgroundResource(R.drawable.rounded_button)
+            btnLast7Day.setBackgroundResource(R.drawable.btn_stat)
            /* findViewById<TextView>(R.id.tvTitle).apply {
                 text = "Date:"
             }*/
@@ -112,6 +114,8 @@ class StatisticsActivity : AppCompatActivity() {
         btnLast7Day.setOnClickListener{
             isDayActive = false
             isWeekActive = true
+            btnLast7Day.setBackgroundResource(R.drawable.rounded_button)
+            btnLastDay.setBackgroundResource(R.drawable.btn_stat)
            /* findViewById<TextView>(R.id.tvTitle).apply {
                 text = "Week:"
             }*/
