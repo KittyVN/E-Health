@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
 
 
 <!--
@@ -28,64 +30,146 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_height="0dp"/>
 -->
-    <Button
-        android:id="@+id/buttonLineChart"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="@color/cardview_light_background"
-        android:text="@string/line_chart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGoogleSteps" />
 
-    <Button
-        android:id="@+id/btnGoogleSteps"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="@color/cardview_light_background"
-        android:text="Fetch Data"
-        android:textColor="#fff"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
-    <Button
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/dogGIF"
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/catGIF"
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:src="@drawable/mole"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/rabbitGIF"
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSettings"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="75dp"
         android:layout_marginRight="30dp"
-        android:background="@color/cardview_light_background"
-        android:text="Google Account"
-        android:drawableTop="@drawable/ic_baseline_settings_24"
-        android:textColor="#fff"
+        android:background="@drawable/rounded_button"
+        android:drawableBottom="@drawable/ic_baseline_settings_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnStatistics"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="30dp"
-        android:background="@color/cardview_light_background"
-        android:drawableTop="@drawable/ic_baseline_auto_graph_24"
-        android:text="Statistics"
-        android:textColor="#fff"
+        android:background="@drawable/rounded_button"
+        android:drawableBottom="@drawable/ic_baseline_auto_graph_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSettings" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSettings"
+        android:visibility="gone"
+        />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSportGame"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="30dp"
-        android:background="@color/cardview_light_background"
-        android:drawableTop="@drawable/ic_baseline_sports_handball_24"
-        android:text="Game"
+        android:background="@drawable/rounded_button"
+        android:drawableBottom="@drawable/ic_baseline_sports_handball_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnStatistics"
+        android:visibility="gone"
+        />
+
+    <LinearLayout
+        android:id="@+id/greenLayout"
+        android:layout_width="30px"
+        android:layout_height="200dp"
+        android:background="@drawable/button_bar"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/arrow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="140dp"
+        android:layout_marginRight="3px"
+        android:text="&lt;"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/arrow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3px"
+        android:layout_marginBottom="140dp"
+        android:text="&lt;"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnInfo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/info_btn"
+        android:drawableBottom="@drawable/ic_outline_info_24"
+        android:text="i"
         android:textColor="#fff"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnStatistics" />
-
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
