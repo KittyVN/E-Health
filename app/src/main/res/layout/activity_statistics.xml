@@ -12,15 +12,68 @@
         android:id="@+id/statisticsLineChart"
         android:layout_width="600dp"
         android:layout_height="300dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="25dp"
+        android:padding="5dp"
         app:layout_constraintEnd_toStartOf="@+id/btnGoForwardInTime"
         app:layout_constraintStart_toEndOf="@+id/btnGoBackInTime"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--<TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_bias="0.45"
+        android:text="Date:"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+-->
+    <TextView
+        android:id="@+id/tvBPM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BPM"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="15dp"
+        android:textSize="10dp"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvHours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TIME"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="10dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGoForwardInTime" />
+
+
+    <TextView
+        android:id="@+id/tvDaysDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:layout_marginTop="15dp"
+        android:text="Date"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnGoBackInTime"
         android:layout_width="30dp"
         android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
         android:text="Back"
         android:drawableTop="@drawable/ic_baseline_arrow_back_ios_new_24"
         app:layout_constraintBottom_toTopOf="@+id/btnLast7Days"
@@ -31,6 +84,7 @@
         android:id="@+id/btnGoForwardInTime"
         android:layout_width="30dp"
         android:layout_height="50dp"
+        android:layout_marginRight="20dp"
         android:text="forward"
         android:drawableTop="@drawable/ic_baseline_arrow_forward_ios_24"
         app:layout_constraintBottom_toTopOf="@+id/btnLastDay"
@@ -52,6 +106,7 @@
         android:layout_height="wrap_content"
         android:text="Week"
         android:layout_marginTop="4dp"
+        android:layout_marginLeft="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statisticsLineChart" />
