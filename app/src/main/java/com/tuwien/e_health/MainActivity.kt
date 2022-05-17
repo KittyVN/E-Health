@@ -287,6 +287,7 @@ class MainActivity : AppCompatActivity() {
                 .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(),
                     TimeUnit.SECONDS
                 )
+                .enableServerQueries()
                 .build()
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -342,6 +343,7 @@ class MainActivity : AppCompatActivity() {
 
         bpmValues.forEach { pair ->
             onlyBpmValues.add(pair.second)
+            Log.i(TAG, pair.first.toString())
         }
 
         val average6hHeartRate = onlyBpmValues.toDoubleArray().average()
@@ -501,17 +503,17 @@ class MainActivity : AppCompatActivity() {
         }else if(restingHeartRate in 60.0..79.9) {
             // good state
 
-            messageAdvanced = "This is a very good value (60 - 80). Seems like you are very relaxed."
+            messageAdvanced = "This is a very good heart rate (60 - 80). Seems like you are very relaxed."
             builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_alt_24)
         }else if(restingHeartRate in 80.0..99.9) {
 
             // semi-good state
-            messageAdvanced = "This is a fairly decent resting heart rate (80 - 100). Try to get into the area of 60 - 80."
+            messageAdvanced = "This is a fairly decent resting heart rate (80 - 100). The next better area would be 60 - 80."
             builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_24)
         }else if(restingHeartRate in 100.0..179.9) {
             // bad
 
-            messageAdvanced = "A resting heart rate over 100 might be an indicator for high stress. If your heart rate is over 100 for a very long time you might want to get yourself checked by a professional."
+            messageAdvanced = "A resting heart rate over 100 might be an indicator for high stress or heart problems. If your heart rate is over 100 for a very long time you might want to get yourself checked by a professional."
             builder.setIcon(R.drawable.ic_baseline_sentiment_dissatisfied_24)
         }else if(restingHeartRate >= 180) {
             // worst state
