@@ -69,29 +69,6 @@ class StatisticsActivity : AppCompatActivity() {
         val btnLastDay = findViewById<Button>(R.id.btnLastDay)
         val btnLast7Day = findViewById<Button>(R.id.btnLast7Days)
 
-        val states = arrayOf(
-            intArrayOf(android.R.attr.state_enabled),
-            intArrayOf(-android.R.attr.state_enabled),
-            intArrayOf(-android.R.attr.state_checked),
-            intArrayOf(android.R.attr.state_pressed)
-            )
-        val colorsActive = intArrayOf(
-            Color.BLACK,
-            Color.BLACK,
-            Color.BLACK,
-            Color.BLACK
-            )
-        val colorsNotActive = intArrayOf(
-            R.color.purple_500,
-            R.color.purple_500,
-            R.color.purple_500,
-            R.color.purple_500
-            )
-
-        val activeBTN = ColorStateList(states, colorsActive)
-        val notActiveBTN = ColorStateList(states, colorsNotActive)
-
-
         btnLastDay.setOnClickListener{
             isDayActive = true
             isWeekActive = false
@@ -251,8 +228,8 @@ class StatisticsActivity : AppCompatActivity() {
             lineDataSetAVG.setDrawCircleHole(false)
             lineDataSetAVG.lineWidth = 2f
             lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.purple_700)
-            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.green_200)
+            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.green_200)
 
             lineDataSetAVG.notifyDataSetChanged()
             Log.i("DatasetAVG:", lineDataSetAVG.toString())
@@ -305,20 +282,20 @@ class StatisticsActivity : AppCompatActivity() {
             lineDataSetAVG.lineWidth = 2f
             lineDataSetAVG.valueTextSize = 15f
             lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.purple_700)
-            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.green_200)
+            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.green_200)
 
             lineDataSetMIN.lineWidth = 2f
             lineDataSetMIN.valueTextSize = 15f
             lineDataSetMIN.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetMIN.color = ContextCompat.getColor(this, R.color.purple_700)
-            lineDataSetMIN.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetMIN.color = ContextCompat.getColor(this, R.color.green_500)
+            lineDataSetMIN.valueTextColor = ContextCompat.getColor(this, R.color.green_500)
 
             lineDataSetMAX.lineWidth = 2f
             lineDataSetMAX.valueTextSize = 15f
             lineDataSetMAX.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetMAX.color = ContextCompat.getColor(this, R.color.purple_700)
-            lineDataSetMAX.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+            lineDataSetMAX.color = ContextCompat.getColor(this, R.color.green_500)
+            lineDataSetMAX.valueTextColor = ContextCompat.getColor(this, R.color.green_500)
 
             lineDataSetAVG.notifyDataSetChanged()
             lineDataSetMAX.notifyDataSetChanged()
@@ -439,8 +416,8 @@ class StatisticsActivity : AppCompatActivity() {
                         lineDataSetAVG.setDrawCircleHole(false)
                         lineDataSetAVG.lineWidth = 2f
                         lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
-                        lineDataSetAVG.color = ContextCompat.getColor(this, R.color.purple_700)
-                        lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+                        lineDataSetAVG.color = ContextCompat.getColor(this, R.color.green_200)
+                        lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.green_200)
 
                         lineDataSetAVG.notifyDataSetChanged()
                         Log.i("DatasetAVG:", lineDataSetAVG.toString())
@@ -482,20 +459,20 @@ class StatisticsActivity : AppCompatActivity() {
                         lineDataSetAVG.lineWidth = 2f
                         lineDataSetAVG.valueTextSize = 15f
                         lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
-                        lineDataSetAVG.color = ContextCompat.getColor(this, R.color.purple_700)
-                        lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.purple_700)
+                        lineDataSetAVG.color = ContextCompat.getColor(this, R.color.green_200)
+                        lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.green_200)
 
                         lineDataSetMIN.lineWidth = 2f
                         lineDataSetMIN.valueTextSize = 15f
                         lineDataSetMIN.mode = LineDataSet.Mode.CUBIC_BEZIER
-                        lineDataSetMIN.color = ContextCompat.getColor(this, R.color.purple_200)
-                        lineDataSetMIN.valueTextColor = ContextCompat.getColor(this, R.color.purple_200)
+                        lineDataSetMIN.color = ContextCompat.getColor(this, R.color.green_500)
+                        lineDataSetMIN.valueTextColor = ContextCompat.getColor(this, R.color.green_500)
 
                         lineDataSetMAX.lineWidth = 2f
                         lineDataSetMAX.valueTextSize = 15f
                         lineDataSetMAX.mode = LineDataSet.Mode.CUBIC_BEZIER
-                        lineDataSetMAX.color = ContextCompat.getColor(this, R.color.purple_200)
-                        lineDataSetMAX.valueTextColor = ContextCompat.getColor(this, R.color.purple_200)
+                        lineDataSetMAX.color = ContextCompat.getColor(this, R.color.green_500)
+                        lineDataSetMAX.valueTextColor = ContextCompat.getColor(this, R.color.green_500)
 
                         lineDataSetAVG.notifyDataSetChanged()
                         lineDataSetMAX.notifyDataSetChanged()

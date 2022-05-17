@@ -3,14 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/drawable/btn_stat.xml" value="0.396" />
+        <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/drawable/button_bar.xml" value="0.396" />
         <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_main.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_statistics.xml" value="0.27203647416413373" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable-v24/LogInOutbtn.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable-v24/btn.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/bloginoutbtn.xml" value="0.1" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/btnStat.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/button_bar.xml" value="0.1" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_arrow_back_ios_new_24.xml" value="0.1" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.2015" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_auto_graph_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_mood_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.1" />
