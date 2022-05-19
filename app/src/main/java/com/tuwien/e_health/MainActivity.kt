@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         // Navigation to Sports Game
         btnSportGame.setOnClickListener {
-            val Intent = Intent(this, SportsGameActivity::class.java)
+            val Intent = Intent(this, SportGameTimer::class.java)
             startActivity(Intent)
         }
 
