@@ -1,9 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sportGame"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SportsGameActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnMessage"
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:background="@drawable/message_button"
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+        />
+
+    <View
+        android:id="@+id/bgWaiting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B3000000"/>
+
+    <ImageView
+        android:id="@+id/circleStart"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/ic_baseline_circle_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/circleStart2"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/ic_baseline_circle_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:text="Start"
+        style="@style/gameBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/circleAgain"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/ic_baseline_circle_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/circleHome"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+        />
+
+    <Button
+        android:id="@+id/btnAgain"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:text="Run again"
+        style="@style/gameBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/btnHome"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+    />
+
+    <ImageView
+        android:id="@+id/circleHome"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/ic_baseline_circle_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/circleAgain"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+        />
+
+    <Button
+        android:id="@+id/btnHome"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:text="Home"
+        style="@style/gameBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/btnAgain"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+        />
+
+    <TextView
+        android:id="@+id/tvBpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="144"
+        android:textSize="30sp"
+        android:textColor="@color/black"
+        android:textStyle=""
+        android:drawableRight="@drawable/ic_baseline_favorite_24"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00 "
+        android:textSize="30sp"
+        android:textColor="@color/black"
+        android:textStyle=""
+        android:drawableRight="@drawable/ic_baseline_timer_24"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
