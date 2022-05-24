@@ -53,15 +53,9 @@ class SettingsActivity : AppCompatActivity() {
 
         btnSignInOut.setOnClickListener {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
-                textBtnSignInOut.text = "Log out"
                 signIn()
-
             } else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
-                textBtnSignInOut.text = "Log \n in"
-                tvAccountName.text = "No account singed in"
-                tvAccountEmail.text = "-"
                 logOut()
-                Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -122,6 +116,11 @@ class SettingsActivity : AppCompatActivity() {
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         mGoogleSignInClient.signOut()
+        btnSignInOut.text = "Log \n in"
+        tvAccountName.text = "No account singed in"
+        tvAccountEmail.text = "-"
+        Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
+
     }
 
     private fun oAuthPermissionsApproved() =
@@ -149,6 +148,7 @@ class SettingsActivity : AppCompatActivity() {
             val account = completedTask.getResult(ApiException::class.java)
             accountInfo()
             setInfoText()
+            btnSignInOut.text = "Log out"
         } catch (e: ApiException) {
             Log.w(ContentValues.TAG, "signInResult:failed code=" + e.statusCode)
         }
