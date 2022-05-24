@@ -21,6 +21,34 @@
         android:visibility="invisible"
         />
 
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/bahn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bahn"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"
+        />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/runner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/runner_neutral"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+        />
+
     <View
         android:id="@+id/bgWaiting"
         android:layout_width="match_parent"
@@ -75,16 +103,16 @@
 
     <Button
         android:id="@+id/btnAgain"
+        style="@style/gameBtn"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:text="Run again"
-        style="@style/gameBtn"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/btnHome"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"
-    />
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/circleHome"
@@ -115,7 +143,7 @@
         android:id="@+id/tvBpm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="144"
+        android:text="144 "
         android:textSize="30sp"
         android:textColor="@color/black"
         android:textStyle=""

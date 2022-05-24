@@ -37,6 +37,8 @@ class SportsGameActivity : AppCompatActivity() {
         // start
         btnStart.setOnClickListener {
             timer()
+            runner.visibility = View.VISIBLE
+            bahn.visibility = View.INVISIBLE
             btnStart.visibility = View.INVISIBLE
             circleStart.visibility = View.INVISIBLE
             circleStart2.visibility = View.INVISIBLE
@@ -47,6 +49,8 @@ class SportsGameActivity : AppCompatActivity() {
         // play again
         btnAgain.setOnClickListener {
             timer()
+            runner.visibility = View.VISIBLE
+            bahn.visibility = View.INVISIBLE
             circleAgain.visibility = View.INVISIBLE
             circleHome.visibility = View.INVISIBLE
             btnAgain.visibility = View.INVISIBLE
@@ -103,6 +107,8 @@ class SportsGameActivity : AppCompatActivity() {
 
                 tvTime.setText("00:00 ")
                 btnStart.setText("Run again")
+                runner.visibility = View.INVISIBLE
+                bahn.visibility = View.VISIBLE
                 circleAgain.visibility = View.VISIBLE
                 circleHome.visibility = View.VISIBLE
                 btnAgain.visibility = View.VISIBLE
