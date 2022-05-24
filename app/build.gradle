@@ -47,5 +47,5 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     // dependency for GIFs
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
 }

@@ -63,6 +63,7 @@ class SportsGameActivity : AppCompatActivity() {
             val Intent = Intent(this, MainActivity::class.java)
             startActivity(Intent)
         }
+
     }
 
 
@@ -152,4 +153,5 @@ class SportsGameActivity : AppCompatActivity() {
             animationHandler.postDelayed(this, 1500)
         }
     }
+
 }
