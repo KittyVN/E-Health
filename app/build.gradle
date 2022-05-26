@@ -48,4 +48,6 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     // dependency for GIFs
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
+    // dependency for Comm
+    implementation 'com.google.android.gms:play-services-wearable:+'
 }

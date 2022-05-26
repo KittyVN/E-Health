@@ -1,5 +1,6 @@
 package com.tuwien.e_health
 
+import android.content.BroadcastReceiver
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,18 +10,32 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.IntentFilter
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
+import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.wearable.Wearable
 import kotlinx.android.synthetic.main.activity_sports_game.*
+import java.util.concurrent.ExecutionException
 
 class SportsGameActivity : AppCompatActivity() {
 
     private var animationHandler = Handler()
     private var messageHandler = Handler()
     private var time = 30000L
+
+    var talkbutton: Button? = null
+    var textview: TextView? = null
+    protected var myHandler: Handler? = null
+    var receivedMessageNumber = 1
+    var sentMessageNumber = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +48,7 @@ class SportsGameActivity : AppCompatActivity() {
         pulseAnimation.run()
         // start
         btnStart.setOnClickListener {
+            talkClick()
             timer()
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
@@ -61,9 +77,94 @@ class SportsGameActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        //Create a message handler//
+        myHandler = Handler { msg ->
+            val stuff = msg.data
+            messageText(stuff.getString("messageText"))
+            true
+        }
+
+        //Register to receive local broadcasts, which we'll be creating in the next step//
+        val messageFilter = IntentFilter(Intent.ACTION_SEND)
+        val messageReceiver: SportsGameActivity.Receiver = SportsGameActivity().Receiver()
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
+
     }
 
+    //################################################
 
+    private fun messageText(newInfo: String?) {
+        /*
+        if (newInfo!!.compareTo("") != 0) {
+            textview!!.append("""$newInfo""".trimIndent()
+            )
+        }
+         */
+    }
+
+    //Define a nested class that extends BroadcastReceiver//
+    inner class Receiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            //Upon receiving each message from the wearable, display the following text//
+            val message = "I just received a message from the wearable " + receivedMessageNumber++
+            //textview!!.text = message
+            Log.i(TAG, message)
+        }
+    }
+
+    fun talkClick() {
+        val message = "Sending message.... "
+        //textview!!.text = message
+        Log.i(TAG, message)
+        //Sending a message can block the main UI thread, so use a new thread//
+        NewThread("/my_path", message).start()
+    }
+
+    //Use a Bundle to encapsulate our message//
+    fun sendMessage(messageText: String?) {
+        val bundle = Bundle()
+        bundle.putString("messageText", messageText)
+        val msg = myHandler!!.obtainMessage()
+        msg.data = bundle
+        myHandler!!.sendMessage(msg)
+    }
+
+    internal inner class NewThread
+    //Constructor for sending information to the Data Layer//
+        (var path: String, var message: String) : Thread() {
+        override fun run() {
+            //Retrieve the connected devices, known as nodes//
+            val wearableList = Wearable.getNodeClient(applicationContext).connectedNodes
+            try {
+                val nodes = Tasks.await(wearableList)
+                for (node in nodes) {
+                    val sendMessageTask =  //Send the message//
+                        Wearable.getMessageClient(this@SportsGameActivity).sendMessage(node.id, path, message.toByteArray())
+                    try {
+                        //Block on a task and get the result synchronously//
+                        val result = Tasks.await(sendMessageTask)
+                        sendMessage("I just sent the wearable a message " + sentMessageNumber++)
+
+                        //if the Task fails, then…..//
+                    } catch (exception: ExecutionException) {
+                        Log.i(TAG, "1")
+                        //TO DO: Handle the exception//
+                    } catch (exception: InterruptedException) {
+                        Log.i(TAG, "2")
+                        //TO DO: Handle the exception//
+                    }
+                }
+            } catch (exception: ExecutionException) {
+                Log.i(TAG, "3")
+                //TO DO: Handle the exception//
+            } catch (exception: InterruptedException) {
+                Log.i(TAG, "4")
+                //TO DO: Handle the exception//
+            }
+        }
+    }
+
+    //################################################
     // game countdown
     private fun timer() {
         object : CountDownTimer(time, 500) {
