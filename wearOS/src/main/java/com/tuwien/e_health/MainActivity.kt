@@ -50,19 +50,18 @@ class MainActivity : Activity() {
 
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
-    private var testCounter = 0
-    private var restingHeartRate = -1.0
-    private val SELECT_DEVICE_REQUEST_CODE = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /* TODO: for testing (for everyone who doesn't have a smartwatch), remove at the end
         buttonPanel.setOnClickListener {
             val bpmValue = "87"
             val dataPath = "/my_path"
             SendMsg(dataPath, bpmValue).start()
         }
+         */
 
         buttonPanelLogIn.setOnClickListener {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
@@ -214,11 +213,10 @@ class MainActivity : Activity() {
 
     private var dataPointListener: OnDataPointListener? = null
 
-    /** Finds available data sources and attempts to register on a specific [DataType].  */
-    private fun findFitnessDataSources() { // [START find_data_sources]
-        Log.i(TAG, "hier")
-        //tvEnd.setText("hier")
-        // Note: Fitness.SensorsApi.findDataSources() requires the ACCESS_FINE_LOCATION permission.
+
+    // find data sources for specified data type
+    private fun findFitnessDataSources() {
+        Log.i(TAG, "Finding data sources ..")
         Fitness.getSensorsClient(this, getGoogleAccount())
             .findDataSources(
                 DataSourcesRequest.Builder()
@@ -228,28 +226,23 @@ class MainActivity : Activity() {
             )
             .addOnSuccessListener { dataSources ->
                 for (dataSource in dataSources) {
-                    Log.i(TAG, "hi")
-                    //tvEnd.setText("hi")
                     Log.i(TAG, "Data source found: $dataSource")
                     Log.i(TAG, "Data Source type: " + dataSource.dataType.name)
-                    // Let's register a listener to receive Activity data!
                     if (dataSource.dataType == DataType.TYPE_HEART_RATE_BPM && dataPointListener == null) {
                         Log.i(TAG, "Data source found!  Registering.")
                         registerFitnessDataListener(dataSource, DataType.TYPE_HEART_RATE_BPM)
                     }
                 }
-                Log.i(TAG, "hie1r $dataSources")
             }
             .addOnFailureListener { e -> Log.e(TAG, "failed", e) }
     }
 
+    // register a listener on incoming data of given data source
     private fun registerFitnessDataListener(dataSource: DataSource, dataType: DataType) {
-        // [START register_data_listener]
-        //tvEnd.setText("yoo")
+        Log.i(TAG, "Registering Listener on data source ..")
         dataPointListener = OnDataPointListener { dataPoint ->
             for (field in dataPoint.dataType.fields) {
                 val value = dataPoint.getValue(field)
-                //tvSteps.setText("steps: $value")
                 Log.i(TAG, "Detected DataPoint field: ${field.name}")
                 Log.i(TAG, "Detected DataPoint value: $value")
                 val dataPath = "/my_path"
@@ -259,8 +252,8 @@ class MainActivity : Activity() {
         Fitness.getSensorsClient(this, getGoogleAccount())
             .add(
                 SensorRequest.Builder()
-                    .setDataSource(dataSource) // Optional but recommended for custom data sets.
-                    .setDataType(dataType) // Can't be omitted.
+                    .setDataSource(dataSource)
+                    .setDataType(dataType)
                     .setSamplingRate(2, TimeUnit.SECONDS)
                     .build(),
                 dataPointListener!!
@@ -274,6 +267,7 @@ class MainActivity : Activity() {
             }
     }
 
+    // remove listener on data source
     private fun removeListener() {
         Fitness.getSensorsClient(this, GoogleSignIn.getAccountForExtension(this, fitnessOptions))
             .remove(dataPointListener!!)

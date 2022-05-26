@@ -177,6 +177,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // TODO: just for testing, remove later
     private fun readHeartRateData(
         timeInterval: TimeUnit,
         endTime: ZonedDateTime,
