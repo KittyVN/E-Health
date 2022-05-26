@@ -36,4 +36,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     //noinspection GradleCompatible
     implementation 'androidx.wear:wear:1.2.0'
+    //Google Fit
+    implementation 'com.google.android.gms:play-services-fitness:21.0.1'
+    implementation 'com.google.android.gms:play-services-auth:20.1.0'
 }
