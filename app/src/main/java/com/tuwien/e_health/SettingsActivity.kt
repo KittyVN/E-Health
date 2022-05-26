@@ -17,7 +17,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.tasks.Task
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity() {
@@ -32,15 +31,13 @@ class SettingsActivity : AppCompatActivity() {
 
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
-    private var testCounter = 0
-    private var average6hHeartRate = 0.0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        this.getWindow().setFlags(
+        this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_settings)
 
         val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
@@ -69,8 +66,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun setInfoText() {
         val acct = GoogleSignIn.getLastSignedInAccount(this)
         if(acct != null){
-            tvAccountName.setText("Hello " + acct.displayName)
-            tvAccountEmail.setText(acct.email)
+            tvAccountName.text = "Hello " + acct.displayName
+            tvAccountEmail.text = acct.email
         }
     }
 
@@ -105,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        val signInIntent = mGoogleSignInClient.getSignInIntent()
+        val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGNIN)
     }
 
@@ -145,7 +142,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
-            val account = completedTask.getResult(ApiException::class.java)
             accountInfo()
             setInfoText()
             btnSignInOut.text = "Log out"

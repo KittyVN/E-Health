@@ -1,7 +1,6 @@
 package com.tuwien.e_health
 
 import android.content.Intent
-import android.nfc.Tag
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -9,14 +8,12 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import com.google.android.material.tabs.TabLayout
 import android.content.ContentValues.TAG
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_sports_game.*
 
 class SportsGameActivity : AppCompatActivity() {
@@ -28,9 +25,9 @@ class SportsGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        this.getWindow().setFlags(
+        this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_sports_game)
 
         pulseAnimation.run()
@@ -60,8 +57,8 @@ class SportsGameActivity : AppCompatActivity() {
 
         // go back home
         btnHome.setOnClickListener {
-            val Intent = Intent(this, MainActivity::class.java)
-            startActivity(Intent)
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
     }
@@ -77,26 +74,26 @@ class SportsGameActivity : AppCompatActivity() {
             private var threeQuarterCheck = false
 
             override fun onTick(millisLeft: Long) {
-                tvTime.setText((millisLeft / 1000).toString() + " ")
+                tvTime.text = (millisLeft / 1000).toString() + " "
 
                 if(millisLeft <= (0.1*time).toLong() && !almostDone) {
                     Log.i(TAG, "90%: $millisLeft")
-                    btnMessage.setText("90% over. Almost finished!")
+                    btnMessage.text = "90% over. Almost finished!"
                     almostDone = true
                     showTimeMessage.run()
                 } else if (millisLeft <= (0.25*time).toLong() && !threeQuarterCheck) {
                     Log.i(TAG, "75%: $millisLeft")
-                    btnMessage.setText("75% over. Hold on!")
+                    btnMessage.text = "75% over. Hold on!"
                     threeQuarterCheck = true
                     showTimeMessage.run()
                 } else if (millisLeft <= (0.5*time).toLong() && !halfCheck) {
                     Log.i(TAG, "50%: $millisLeft")
-                    btnMessage.setText("50% over. Halftime!")
+                    btnMessage.text = "50% over. Halftime!"
                     halfCheck = true
                     showTimeMessage.run()
                 } else if (millisLeft <= (0.75*time).toLong() && !quarterCheck) {
                     Log.i(TAG, "25%: $millisLeft")
-                    btnMessage.setText("25% over. Keep going!")
+                    btnMessage.text = "25% over. Keep going!"
                     quarterCheck = true
                     showTimeMessage.run()
                 }
@@ -106,8 +103,8 @@ class SportsGameActivity : AppCompatActivity() {
             override fun onFinish() {
                 // time over
 
-                tvTime.setText("00:00 ")
-                btnStart.setText("Run again")
+                tvTime.text = "00:00 "
+                btnStart.text = "Run again"
                 runner.visibility = View.INVISIBLE
                 bahn.visibility = View.VISIBLE
                 circleAgain.visibility = View.VISIBLE

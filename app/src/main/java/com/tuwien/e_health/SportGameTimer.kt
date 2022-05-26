@@ -1,6 +1,5 @@
 package com.tuwien.e_health
 
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,12 +7,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.TimePicker
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.btnSportGame
 import kotlinx.android.synthetic.main.activity_sport_game_timer.*
-import java.util.*
 
 
 class SportGameTimer : AppCompatActivity() {
@@ -24,31 +20,31 @@ class SportGameTimer : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        this.getWindow().setFlags(
+        this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_sport_game_timer)
-        timePicker.setIs24HourView(true);
+        timePicker.setIs24HourView(true)
         timePicker.hour = 0
         timePicker.minute = 30
 
         val msg = "$hourVar : $minuteVar"
         tvEnteredTime.text = msg
 
-        OnClickTime()
+        onClickTime()
 
         // Navigation to Settings
         btnSportGame.setOnClickListener {
-            val Intent = Intent(this, SportsGameActivity::class.java)
-            startActivity(Intent)
+            val intent = Intent(this, SportsGameActivity::class.java)
+            startActivity(intent)
         }
     }
 
 
-    private fun OnClickTime() {
+    private fun onClickTime() {
         val textView = findViewById<TextView>(R.id.tvEnteredTime)
         val timePicker = findViewById<TimePicker>(R.id.timePicker)
-        timePicker.setOnTimeChangedListener { _, hour, minute -> var hour = hour
+        timePicker.setOnTimeChangedListener { _, hour, minute -> val hour = hour
 
             if (textView != null) {
                 hourVar = hour
