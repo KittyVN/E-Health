@@ -14,8 +14,6 @@ import android.content.Context
 import android.content.IntentFilter
 import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -31,12 +29,6 @@ class SportsGameActivity : AppCompatActivity() {
     private var messageHandler = Handler()
     private var time = 30000L
 
-    var talkbutton: Button? = null
-    var textview: TextView? = null
-    protected var myHandler: Handler? = null
-    var receivedMessageNumber = 1
-    var sentMessageNumber = 1
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -48,7 +40,7 @@ class SportsGameActivity : AppCompatActivity() {
         pulseAnimation.run()
         // start
         btnStart.setOnClickListener {
-            talkClick()
+            sendStartSignal()
             timer()
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
@@ -61,6 +53,7 @@ class SportsGameActivity : AppCompatActivity() {
 
         // play again
         btnAgain.setOnClickListener {
+            sendStartSignal()
             timer()
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
@@ -77,94 +70,57 @@ class SportsGameActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        //Create a message handler//
-        myHandler = Handler { msg ->
-            val stuff = msg.data
-            messageText(stuff.getString("messageText"))
-            true
-        }
-
-        //Register to receive local broadcasts, which we'll be creating in the next step//
+        // register to receive local broadcasts
         val messageFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver: SportsGameActivity.Receiver = SportsGameActivity().Receiver()
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
 
     }
 
-    //################################################
-
-    private fun messageText(newInfo: String?) {
-        /*
-        if (newInfo!!.compareTo("") != 0) {
-            textview!!.append("""$newInfo""".trimIndent()
-            )
-        }
-         */
-    }
-
-    //Define a nested class that extends BroadcastReceiver//
+    // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            //Upon receiving each message from the wearable, display the following text//
-            val message = "I just received a message from the wearable " + receivedMessageNumber++
-            //textview!!.text = message
-            Log.i(TAG, message)
+            Log.i(TAG, "Incoming msg: " + intent.getStringExtra("message").toString())
         }
     }
 
-    fun talkClick() {
-        val message = "Sending message.... "
-        //textview!!.text = message
-        Log.i(TAG, message)
-        //Sending a message can block the main UI thread, so use a new thread//
-        NewThread("/my_path", message).start()
+    // tell wearable to start heart rate sampling
+    private fun sendStartSignal() {
+        val message = "Start"
+        SendMsg("/my_path", message).start()
     }
 
-    //Use a Bundle to encapsulate our message//
-    fun sendMessage(messageText: String?) {
-        val bundle = Bundle()
-        bundle.putString("messageText", messageText)
-        val msg = myHandler!!.obtainMessage()
-        msg.data = bundle
-        myHandler!!.sendMessage(msg)
+    // tell wearable to stop heart rate sampling
+    private fun sendStopSignal() {
+        val message = "Stop"
+        SendMsg("/my_path", message).start()
     }
 
-    internal inner class NewThread
-    //Constructor for sending information to the Data Layer//
+    // send message to wearable
+    internal inner class SendMsg
         (var path: String, var message: String) : Thread() {
         override fun run() {
-            //Retrieve the connected devices, known as nodes//
+            // Retrieve the connected devices (nodes)
             val wearableList = Wearable.getNodeClient(applicationContext).connectedNodes
             try {
                 val nodes = Tasks.await(wearableList)
                 for (node in nodes) {
-                    val sendMessageTask =  //Send the message//
+                    // Send the message
+                    val sendMessageTask =
                         Wearable.getMessageClient(this@SportsGameActivity).sendMessage(node.id, path, message.toByteArray())
                     try {
-                        //Block on a task and get the result synchronously//
                         val result = Tasks.await(sendMessageTask)
-                        sendMessage("I just sent the wearable a message " + sentMessageNumber++)
-
-                        //if the Task fails, then…..//
+                        Log.i(TAG, "Msg sent successfully")
                     } catch (exception: ExecutionException) {
-                        Log.i(TAG, "1")
-                        //TO DO: Handle the exception//
-                    } catch (exception: InterruptedException) {
-                        Log.i(TAG, "2")
-                        //TO DO: Handle the exception//
+                        Log.i(TAG, exception.toString())
                     }
                 }
             } catch (exception: ExecutionException) {
-                Log.i(TAG, "3")
-                //TO DO: Handle the exception//
-            } catch (exception: InterruptedException) {
-                Log.i(TAG, "4")
-                //TO DO: Handle the exception//
+                Log.i(TAG, exception.toString())
             }
         }
     }
 
-    //################################################
     // game countdown
     private fun timer() {
         object : CountDownTimer(time, 500) {
@@ -204,6 +160,7 @@ class SportsGameActivity : AppCompatActivity() {
             override fun onFinish() {
                 // time over
 
+                sendStopSignal()
                 tvTime.text = "00:00 "
                 btnStart.text = "Run again"
                 runner.visibility = View.INVISIBLE
