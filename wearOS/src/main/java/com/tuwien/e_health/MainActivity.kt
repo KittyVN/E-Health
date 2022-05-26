@@ -2,8 +2,6 @@ package com.tuwien.e_health
 
 import android.Manifest
 import android.app.Activity
-import android.bluetooth.BluetoothDevice
-import android.companion.CompanionDeviceManager
 import android.os.Bundle
 
 import android.content.BroadcastReceiver
@@ -66,6 +64,16 @@ class MainActivity : Activity() {
             SendMsg(dataPath, bpmValue).start()
         }
 
+        buttonPanelLogIn.setOnClickListener {
+            if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+                signIn()
+                buttonPanelLogIn.text = "Log Out"
+            } else {
+                logOut()
+                buttonPanelLogIn.text = "Log In"
+            }
+        }
+
         // register to receive local broadcasts
         val newFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver = Receiver()
@@ -78,7 +86,8 @@ class MainActivity : Activity() {
     private fun checkPermissions() {
         // check for android permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
@@ -86,7 +95,8 @@ class MainActivity : Activity() {
             )
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -94,7 +104,8 @@ class MainActivity : Activity() {
             )
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.BODY_SENSORS),
@@ -102,7 +113,8 @@ class MainActivity : Activity() {
             )
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
@@ -115,6 +127,11 @@ class MainActivity : Activity() {
     inner class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.i(TAG, "Incoming msg: " + intent.getStringExtra("message").toString())
+            if (intent.getStringExtra("message").toString() == "Start") {
+                findFitnessDataSources()
+            } else if (intent.getStringExtra("message").toString() == "Stop") {
+                removeListener()
+            }
         }
     }
 
@@ -145,7 +162,8 @@ class MainActivity : Activity() {
             this,
             RC_PERMISSION,
             getGoogleAccount(),
-            fitnessOptions)
+            fitnessOptions
+        )
     }
 
     private fun accountInfo() {
@@ -157,13 +175,16 @@ class MainActivity : Activity() {
             Log.i(TAG, "personEmail: " + acct.email)
             Log.i(TAG, "personName: " + acct.displayName)
             Log.i(TAG, "personId: " + acct.id)
-        }else{
+        } else {
             Log.i(TAG, "no account")
         }
     }
 
     private fun oAuthPermissionsApproved() =
-        GoogleSignIn.hasPermissions(GoogleSignIn.getAccountForExtension(this, fitnessOptions), fitnessOptions)
+        GoogleSignIn.hasPermissions(
+            GoogleSignIn.getAccountForExtension(this, fitnessOptions),
+            fitnessOptions
+        )
 
     private fun getGoogleAccount(): GoogleSignInAccount =
         GoogleSignIn.getAccountForExtension(this, fitnessOptions)
@@ -203,7 +224,8 @@ class MainActivity : Activity() {
                 DataSourcesRequest.Builder()
                     .setDataTypes(DataType.TYPE_HEART_RATE_BPM)
                     .setDataSourceTypes(DataSource.TYPE_RAW)
-                    .build())
+                    .build()
+            )
             .addOnSuccessListener { dataSources ->
                 for (dataSource in dataSources) {
                     Log.i(TAG, "hi")
@@ -224,12 +246,14 @@ class MainActivity : Activity() {
     private fun registerFitnessDataListener(dataSource: DataSource, dataType: DataType) {
         // [START register_data_listener]
         //tvEnd.setText("yoo")
-        var dataPointListener = OnDataPointListener { dataPoint ->
+        dataPointListener = OnDataPointListener { dataPoint ->
             for (field in dataPoint.dataType.fields) {
                 val value = dataPoint.getValue(field)
                 //tvSteps.setText("steps: $value")
                 Log.i(TAG, "Detected DataPoint field: ${field.name}")
                 Log.i(TAG, "Detected DataPoint value: $value")
+                val dataPath = "/my_path"
+                SendMsg(dataPath, value.toString()).start()
             }
         }
         Fitness.getSensorsClient(this, getGoogleAccount())
@@ -239,13 +263,25 @@ class MainActivity : Activity() {
                     .setDataType(dataType) // Can't be omitted.
                     .setSamplingRate(2, TimeUnit.SECONDS)
                     .build(),
-                dataPointListener)
+                dataPointListener!!
+            )
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.i(TAG, "Listener registered!")
                 } else {
                     Log.e(TAG, "Listener not registered.", task.exception)
                 }
+            }
+    }
+
+    private fun removeListener() {
+        Fitness.getSensorsClient(this, GoogleSignIn.getAccountForExtension(this, fitnessOptions))
+            .remove(dataPointListener!!)
+            .addOnSuccessListener {
+                Log.i(TAG, "Listener was removed!")
+            }
+            .addOnFailureListener {
+                Log.i(TAG, "Listener was not removed.")
             }
     }
 
@@ -263,7 +299,7 @@ class MainActivity : Activity() {
                         .sendMessage(node.id, path, message.toByteArray())
                     try {
                         val result = Tasks.await(sendMessageTask)
-                        Log.i(TAG, "Msg sent successfully")
+                        //Log.i(TAG, "Msg sent successfully")
                     } catch (exception: InterruptedException) {
                         exception.toString()
                     }
