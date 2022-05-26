@@ -3,12 +3,12 @@ package com.tuwien.e_health
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -17,6 +17,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -34,6 +39,7 @@ class SettingsActivity : AppCompatActivity() {
     private val RC_PERMISSION = 1
     private var testCounter = 0
     private var average6hHeartRate = 0.0;
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,8 @@ class SettingsActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_settings)
+
+        database = Firebase.database("https://e-health-347815-default-rtdb.europe-west1.firebasedatabase.app").reference
 
         val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
 
@@ -63,6 +71,20 @@ class SettingsActivity : AppCompatActivity() {
                 logOut()
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        val user = FirebaseAuth.getInstance().currentUser
+        ageInfo.text = "Your age is not yet set. user id: $user"
+        user?.let {
+            val email = user.email
+
+            // Check if user's email is verified
+            val emailVerified = user.isEmailVerified
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            val uid = user.uid
         }
 
     }
