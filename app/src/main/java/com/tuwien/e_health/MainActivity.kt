@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         database = Firebase.database("https://e-health-347815-default-rtdb.europe-west1.firebasedatabase.app").reference
 
         // adds listener that reads all userID's stored in database and adds them to knownUsers
-        addDatabaseEventListener(database.child("users"))
+        addUserIDEventListener(database.child("users"))
 
         // gets instance of FirebaseAuth object
         auth = Firebase.auth
@@ -237,7 +237,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun addDatabaseEventListener(databaseReference: DatabaseReference) {
+    private fun addUserIDEventListener(databaseReference: DatabaseReference) {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.children

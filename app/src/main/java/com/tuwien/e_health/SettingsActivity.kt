@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -45,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
         .addDataType(DataType.TYPE_WORKOUT_EXERCISE, FitnessOptions.ACCESS_READ)
         .build()
 
-    private lateinit var auth: FirebaseAuth
+    private lateinit var auth : FirebaseAuth
     private val REQ_ONE_TAP = 3 // Can be any integer unique to the Activity
     private var showOneTapUI = true
     private lateinit var oneTapClient: SignInClient
@@ -56,6 +58,8 @@ class SettingsActivity : AppCompatActivity() {
     private var testCounter = 0
     private var average6hHeartRate = 0.0;
     private var knownUsers : MutableSet<String> = mutableSetOf()
+    private var age = -1
+    private var sportMode = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,10 +74,16 @@ class SettingsActivity : AppCompatActivity() {
         database = Firebase.database("https://e-health-347815-default-rtdb.europe-west1.firebasedatabase.app").reference
 
         // adds listener that reads all userID's stored in database and adds them to knownUsers
-        addDatabaseEventListener(database.child("users"))
+        addUserIDEventListener(database.child("users"))
 
         // gets instance of FirebaseAuth object
         auth = Firebase.auth
+
+        // adds listener that reads current user's age
+        addAgeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
+
+        // adds listener that reads current user's sport mode setting
+        addSportModeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
 
         val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
 
@@ -108,6 +118,9 @@ class SettingsActivity : AppCompatActivity() {
         if (user != null) {
             tvAccountName.setText("Hello " + user.displayName)
             tvAccountEmail.setText(user.email)
+            addAgeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
+            addSportModeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
+
         }
     }
 
@@ -183,7 +196,10 @@ class SettingsActivity : AppCompatActivity() {
         // log out of Google Account
 
         Firebase.auth.signOut()
-
+        age = -1
+        ageInfo.text = "Your age is not yet set."
+        sportMode = false
+        fitnessSwitch.isChecked = sportMode
 
         // Old sign out function code, still needed. See comment in MainActivity's googleAccSignIn function.
         // TODO: Delete this as well as soon as it's figured out how to work without it.
@@ -205,7 +221,7 @@ class SettingsActivity : AppCompatActivity() {
             }
     }
 
-    private fun addDatabaseEventListener(databaseReference: DatabaseReference) {
+    private fun addUserIDEventListener(databaseReference: DatabaseReference) {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.children
@@ -215,6 +231,56 @@ class SettingsActivity : AppCompatActivity() {
                         Log.w(TAG, "Database listener retrieved data: " + it)
                     }
                 }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        databaseReference.addValueEventListener(databaseListener)
+    }
+
+    private fun changeAgeInDatabase(age: Int) {
+        auth.currentUser?.let {
+            database.child("users").child(it.uid).child("age").setValue(age)
+        }
+    }
+
+    private fun addAgeEventListener(databaseReference: DatabaseReference) {
+        val databaseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val database = dataSnapshot.child("age")
+                age = database.value.toString().toInt()
+                Log.i(TAG,"age is " + database.value)
+                val ageInfo : TextView = findViewById(R.id.ageInfo) as TextView
+                if (age != -1) {
+                    ageInfo.text = "You are $age years old."
+                } else {
+                    ageInfo.text = "Your age is not yet set."
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        databaseReference.addValueEventListener(databaseListener)
+    }
+
+    private fun changeSportModeInDatabase(sportMode: Boolean) {
+        auth.currentUser?.let {
+            database.child("users").child(it.uid).child("sportMode").setValue(sportMode)
+        }
+    }
+
+    private fun addSportModeEventListener(databaseReference: DatabaseReference) {
+        val databaseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val database = dataSnapshot.child("sportMode")
+                sportMode = database.value.toString().toBooleanStrict()
+                Log.i(TAG,"sport mode " + database.value)
+                val fitnessSwitch : Switch = findViewById(R.id.fitnessSwitch) as Switch
+                fitnessSwitch.isChecked = sportMode
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
