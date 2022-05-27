@@ -106,6 +106,16 @@ class SettingsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
             }
         }
+
+        btnAge.setOnClickListener {
+            changeAgeInDatabase(setAgeTo.text.toString().toInt())
+            setAgeTo.text.clear()
+        }
+
+        fitnessSwitch.setOnClickListener {
+            changeSportModeInDatabase(fitnessSwitch.isChecked)
+        }
+
     }
 
     override fun onStart() {

@@ -107,7 +107,7 @@
         android:textSize="20sp"
         android:textStyle=""
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/setAgeTo" />
 
     <Button
         android:id="@+id/btnAge"
@@ -116,7 +116,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:text="update"
-        app:layout_constraintStart_toEndOf="@+id/editTextNumber"
+        app:layout_constraintStart_toEndOf="@+id/setAgeTo"
         app:layout_constraintTop_toBottomOf="@+id/ageInfo" />
 
     <Switch
@@ -127,10 +127,10 @@
         android:layout_marginTop="25dp"
         android:checked="false"
         app:layout_constraintStart_toEndOf="@+id/fitnessModeQuestion"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/setAgeTo" />
 
     <EditText
-        android:id="@+id/editTextNumber"
+        android:id="@+id/setAgeTo"
         android:layout_width="132dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
