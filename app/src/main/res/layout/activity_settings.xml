@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="21dp"
-        android:text="Age:"
+        android:text="Set age to:"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle=""
@@ -102,7 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="37dp"
-        android:text="Activate Fitness Mode"
+        android:text="Enable Fitness Mode"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle=""
@@ -132,11 +132,11 @@
         android:id="@+id/editTextNumber"
         android:layout_width="132dp"
         android:layout_height="48dp"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="number"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ageInfo2"
         app:layout_constraintTop_toBottomOf="@+id/ageInfo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
