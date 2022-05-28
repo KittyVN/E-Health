@@ -80,10 +80,12 @@ class SettingsActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         // adds listener that reads current user's age
-        addAgeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
+        auth.currentUser?.let { database.child("users").child(it.uid) }
+            ?.let { addAgeEventListener(it) }
 
         // adds listener that reads current user's sport mode setting
-        addSportModeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
+        auth.currentUser?.let { database.child("users").child(it.uid) }
+            ?.let { addSportModeEventListener(it) }
 
         val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
 
@@ -95,7 +97,6 @@ class SettingsActivity : AppCompatActivity() {
 
         btnSignInOut.setOnClickListener {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
-                textBtnSignInOut.text = "Log out"
                 signIn()
 
             } else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
@@ -327,6 +328,8 @@ class SettingsActivity : AppCompatActivity() {
                                         Log.d(TAG, "signInWithCredential:success")
                                         val user = auth.currentUser
                                         oldGoogleAccSignIn()
+                                        val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
+                                        textBtnSignInOut.text = "Log out"
                                         updateUI(user)
                                         if (user != null) {
                                             if (knownUsers.contains(user.uid)) {
@@ -357,6 +360,8 @@ class SettingsActivity : AppCompatActivity() {
                             Log.d(TAG, "One-tap dialog was closed.")
                             // Don't re-prompt the user.
                             showOneTapUI = false
+                            Toast.makeText(this, "Google account is needed for this app to work. Please sign in.", Toast.LENGTH_LONG).show()
+
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
                             Log.d(TAG, "One-tap encountered a network error.")
@@ -380,7 +385,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
-            Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
         }
 
     }

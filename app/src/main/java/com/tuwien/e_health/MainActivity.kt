@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         // checks for logged account on startup, if not account, login
         if(GoogleSignIn.getLastSignedInAccount(this) == null) {
             signIn()
+            Log.i(TAG,"SIGN IN CALLED")
         }else{
             //already logged in
         }
@@ -207,6 +208,11 @@ class MainActivity : AppCompatActivity() {
                 // No saved credentials found. Launch the One Tap sign-up flow, or
                 // do nothing and continue presenting the signed-out UI.
                 Log.d(TAG, e.localizedMessage)
+                Log.d(TAG,"log in failure listener called since there is no account")
+                val Intent = Intent(this, NoGoogleAccountActivity::class.java)
+                startActivity(Intent)
+
+
             }
     }
 
@@ -612,6 +618,7 @@ class MainActivity : AppCompatActivity() {
                             Log.d(TAG, "One-tap dialog was closed.")
                             // Don't re-prompt the user.
                             showOneTapUI = false
+                            Toast.makeText(this, "Google account is needed for this app to work. Please sign in in settings.", Toast.LENGTH_LONG).show()
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
                             Log.d(TAG, "One-tap encountered a network error.")
@@ -635,7 +642,6 @@ class MainActivity : AppCompatActivity() {
             }
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
-            Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
         }
 
     }
