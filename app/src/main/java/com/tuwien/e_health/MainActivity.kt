@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -78,6 +79,8 @@ class MainActivity : AppCompatActivity() {
     private var testCounter = 0
     var toggle = false
     private var restingHeartRate = -1.0
+    private var age = -1
+    private var sportMode = false
     private var knownUsers : MutableSet<String> = mutableSetOf()
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -170,10 +173,21 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onStart() {
+        Log.i(TAG,"main started")
         // reload pond data on every start
         super.onStart()
+
         // Check if user is signed in (non-null) and update UI accordingly
         val currentUser = auth.currentUser
+
+        // adds listener that reads current user's age
+        auth.currentUser?.let { database.child("users").child(it.uid) }
+            ?.let { addAgeEventListener(it) }
+
+        // adds listener that reads current user's sport mode setting
+        auth.currentUser?.let { database.child("users").child(it.uid) }
+            ?.let { addSportModeEventListener(it) }
+
         updateUI(currentUser)
         read6hActivities()
     }
@@ -294,8 +308,9 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "personId: " + user.uid)
         }else{
             Log.i(TAG, "no account")
+            age = -1
+            sportMode = false
         }
-        read6hActivities()
     }
 
     // TODO: Delete this function. It's not needed anymore
@@ -519,6 +534,38 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    private fun addAgeEventListener(databaseReference: DatabaseReference) {
+        val databaseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val database = dataSnapshot.child("age")
+                age = database.value.toString().toInt()
+                Log.i(TAG,"age is " + database.value)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        databaseReference.addValueEventListener(databaseListener)
+    }
+
+    private fun addSportModeEventListener(databaseReference: DatabaseReference) {
+        val databaseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val database = dataSnapshot.child("sportMode")
+                sportMode = database.value.toString().toBooleanStrict()
+                Log.i(TAG,"sport mode " + database.value)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        databaseReference.addValueEventListener(databaseListener)
+    }
+
+
     private fun setBackground(int: Int){
         val resId = resources.getIdentifier("bg_$int", "drawable", packageName)
         backgroundImage.setImageResource(resId);
@@ -599,6 +646,15 @@ class MainActivity : AppCompatActivity() {
                                            Log.d(TAG,"no user found")
                                        }
                                        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
+
+                                       // listeners are called again late after sign in to get accurate account data
+                                       // adds listener that reads current user's age
+                                       auth.currentUser?.let { database.child("users").child(it.uid) }
+                                           ?.let { addAgeEventListener(it) }
+                                       // adds listener that reads current user's sport mode setting
+                                       auth.currentUser?.let { database.child("users").child(it.uid) }
+                                           ?.let { addSportModeEventListener(it) }
+
                                    } else {
                                        // If sign in fails, display a message to the user.
                                        Log.w(TAG, "signInWithCredential:failure", task.exception)

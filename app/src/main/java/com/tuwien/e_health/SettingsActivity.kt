@@ -58,8 +58,6 @@ class SettingsActivity : AppCompatActivity() {
     private var testCounter = 0
     private var average6hHeartRate = 0.0;
     private var knownUsers : MutableSet<String> = mutableSetOf()
-    private var age = -1
-    private var sportMode = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,14 +76,6 @@ class SettingsActivity : AppCompatActivity() {
 
         // gets instance of FirebaseAuth object
         auth = Firebase.auth
-
-        // adds listener that reads current user's age
-        auth.currentUser?.let { database.child("users").child(it.uid) }
-            ?.let { addAgeEventListener(it) }
-
-        // adds listener that reads current user's sport mode setting
-        auth.currentUser?.let { database.child("users").child(it.uid) }
-            ?.let { addSportModeEventListener(it) }
 
         val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
 
@@ -129,9 +119,14 @@ class SettingsActivity : AppCompatActivity() {
         if (user != null) {
             tvAccountName.setText("Hello " + user.displayName)
             tvAccountEmail.setText(user.email)
-            addAgeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
-            addSportModeEventListener(auth.currentUser?.let { database.child("users").child(it.uid) }!!)
 
+            // adds listener that reads current user's age
+            auth.currentUser?.let { database.child("users").child(it.uid) }
+                ?.let { addAgeEventListener(it) }
+
+            // adds listener that reads current user's sport mode setting
+            auth.currentUser?.let { database.child("users").child(it.uid) }
+                ?.let { addSportModeEventListener(it) }
         }
     }
 
@@ -207,10 +202,8 @@ class SettingsActivity : AppCompatActivity() {
         // log out of Google Account
 
         Firebase.auth.signOut()
-        age = -1
         ageInfo.text = "Your age is not yet set."
-        sportMode = false
-        fitnessSwitch.isChecked = sportMode
+        fitnessSwitch.isChecked = false
 
         // Old sign out function code, still needed. See comment in MainActivity's googleAccSignIn function.
         // TODO: Delete this as well as soon as it's figured out how to work without it.
@@ -261,7 +254,7 @@ class SettingsActivity : AppCompatActivity() {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.child("age")
-                age = database.value.toString().toInt()
+                val  age = database.value.toString().toInt()
                 Log.i(TAG,"age is " + database.value)
                 val ageInfo : TextView = findViewById(R.id.ageInfo) as TextView
                 if (age != -1) {
@@ -288,7 +281,7 @@ class SettingsActivity : AppCompatActivity() {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.child("sportMode")
-                sportMode = database.value.toString().toBooleanStrict()
+                val sportMode = database.value.toString().toBooleanStrict()
                 Log.i(TAG,"sport mode " + database.value)
                 val fitnessSwitch : Switch = findViewById(R.id.fitnessSwitch) as Switch
                 fitnessSwitch.isChecked = sportMode
