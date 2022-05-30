@@ -379,7 +379,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateMainScreen(rhr: Double) {
         // update background and gifs of main-screen due to resting-heart-rate rhr
-        val rhr = 54.0
+        //val rhr = 54.0
         if (rhr <= 0 || rhr.isNaN()) {
             setBackground(0)
         } else if (rhr in 1.0..59.9) {

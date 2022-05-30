@@ -34,7 +34,7 @@ class SportsGameActivity : AppCompatActivity() {
     private var bpmMsgDuration = 5000L
     private var currentTime = 0L
     private val tag = "[SportsGameActivity]"
-    private var hr = 144L
+    private var hr = 80L
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
 
@@ -248,6 +248,7 @@ class SportsGameActivity : AppCompatActivity() {
                     // in resting heart rate area -> too low
                     //Log.i(tag, "in rhr")
                     status = HeartRateStatus.IN_RHR
+                    runner.setImageResource(R.drawable.runner_rhr)
                 } else if(hr >= 100 && hr < 0.6*180) {
                     // above rhr, under thr -> ok
                     //Log.i(tag, "above rhr, under thr")
