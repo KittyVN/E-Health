@@ -23,17 +23,20 @@ import kotlinx.android.synthetic.main.activity_sports_game.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
-// TODO: heart rate impact -> animation and messages
+// TODO: heart rate impact -> animations and messages
 
 class SportsGameActivity : AppCompatActivity() {
 
     private var animationHandler = Handler()
     private var messageHandler = Handler()
-    private var time = 30000L
+    private var time = 0L
     private var timeMsgDuration = 2000L
+    private var bpmMsgDuration = 5000L
     private var currentTime = 0L
     private val tag = "[SportsGameActivity]"
     private var hr = 144L
+    private var status : HeartRateStatus? = null
+    private var heartRateMsgTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,7 @@ class SportsGameActivity : AppCompatActivity() {
         val passedTime = intent.getLongExtra("data", 60000L)
         time = passedTime
         Log.i(tag, "Passed time: $time")
+        tvTime.text = formatTime(time)
 
         // game countdown timer
         var gameTimer = timer(time, 1000)
@@ -177,10 +181,18 @@ class SportsGameActivity : AppCompatActivity() {
             private var quarterCheck = false
             private var halfCheck = false
             private var threeQuarterCheck = false
+            private var bpmChecker = false
 
             override fun onTick(millisLeft: Long) {
                 tvTime.text = formatTime(millisLeft)
-                setBpmAnimation()
+
+                // also sets runner animation
+                setHeartRateStatus()
+
+                // check for heart rate message
+                checkHeartRateMessage(millisLeft)
+
+                // create time message
                 if (millisLeft <= (0.1 * time).toLong() && !almostDone) {
                     Log.i(tag, "90%: $millisLeft")
                     btnMessage.text = "90% over. Almost finished!"
@@ -222,41 +234,119 @@ class SportsGameActivity : AppCompatActivity() {
                 bgWaiting.visibility = View.VISIBLE
             }
 
-            // milliseconds to hh:mm:ss
-            private fun formatTime(millisLeft: Long):String {
-                val hours = TimeUnit.MILLISECONDS.toHours(millisLeft) % 24
-                val minutes = TimeUnit.MILLISECONDS.toMinutes(millisLeft) % 60
-                val seconds = TimeUnit.MILLISECONDS.toSeconds(millisLeft) % 60
-                var timeString = ""
-                if(hours == 0L) {
-                    timeString = "$minutes:$seconds "
-                    if(minutes == 0L) {
-                        timeString = "$seconds "
-                    }
-                }else if(hours > 0L) {
-                    timeString = "$hours:$minutes:$seconds "
+            // set heart rate status and change runner animation accordingly
+            private fun setHeartRateStatus() {
+                if(hr >= 0.6*180 && hr <= 0.85*180) {
+                    // in target heart rate area -> very good
+                    //Log.i(tag, "in thr")
+                    status = HeartRateStatus.IN_THR
+                } else if(hr > 0.85*180) {
+                    // above target heart rate -> too much
+                    //Log.i(tag, "above thr")
+                    status = HeartRateStatus.ABOVE_THR
+                } else if(hr <= 100) {
+                    // in resting heart rate area -> too low
+                    //Log.i(tag, "in rhr")
+                    status = HeartRateStatus.IN_RHR
+                } else if(hr >= 100 && hr < 0.6*180) {
+                    // above rhr, under thr -> ok
+                    //Log.i(tag, "above rhr, under thr")
+                    status = HeartRateStatus.UNDER_THR
+                    runner.setImageResource(R.drawable.runner_neutral)
                 }
-                return timeString
             }
+
+            // check for heart rate message
+            private fun checkHeartRateMessage(millisLeft: Long) {
+                if (status == HeartRateStatus.IN_RHR && !bpmChecker) {
+                    heartRateMsgTime = millisLeft
+                    bpmChecker = true
+                } else if((status == HeartRateStatus.IN_RHR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
+                    btnMessage.text = "Try harder! Get at least over 100 bpm!"
+                    showHeartRateMessage.run()
+                    bpmChecker = false
+                } else if (status == HeartRateStatus.IN_THR && !bpmChecker) {
+                    heartRateMsgTime = millisLeft
+                    bpmChecker = true
+                    btnMessage.text = "Very good! Stay between " + 0.6*180 + " - " + 0.85*180 +" BPM!"
+                    showHeartRateMessage.run()
+                } else if((status == HeartRateStatus.IN_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-20000L))) {
+                    bpmChecker = false
+                } else if (status == HeartRateStatus.ABOVE_THR && !bpmChecker) {
+                    heartRateMsgTime = millisLeft
+                    bpmChecker = true
+                    btnMessage.text = "You are trying too hard. Slow down a little bit! Go under " + 0.85*180 +" BPM!"
+                    showHeartRateMessage.run()
+                } else if((status == HeartRateStatus.ABOVE_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
+                    bpmChecker = false
+                } else if (status == HeartRateStatus.UNDER_THR && !bpmChecker) {
+                    heartRateMsgTime = millisLeft
+                    bpmChecker = true
+                } else if((status == HeartRateStatus.UNDER_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
+                    btnMessage.text = "Try a bit harder! Get between " + 0.6*180 + " - " + 0.85*180 +" BPM!"
+                    showHeartRateMessage.run()
+                    bpmChecker = false
+                }
+            }
+
         }
 
     }
 
-    // change runner animation according to heart rate
-    private fun setBpmAnimation() {
-        if(hr >= 0.6*180 && hr <= 0.85*180) {
-            // in target heart rate area -> very good
-            //Log.i(tag, "in thr")
-        } else if(hr > 0.85*180) {
-            // above target heart rate -> too much
-            //Log.i(tag, "above thr")
-        } else if(hr <= 100) {
-            // in resting heart rate area -> too low
-            //Log.i(tag, "in rhr")
-        } else if(hr >= 100 && hr < 0.6*180) {
-            // above rhr, under thr -> ok
-            //Log.i(tag, "above rhr, under thr")
+    // milliseconds to hh:mm:ss
+    private fun formatTime(millisLeft: Long):String {
+        val hours = TimeUnit.MILLISECONDS.toHours(millisLeft) % 24
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millisLeft) % 60
+        var minutesString = minutes.toString()
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millisLeft) % 60
+        var secondsString = seconds.toString()
+
+        if(seconds < 10) {
+            secondsString = "0$secondsString"
         }
+        if(minutes < 10) {
+            minutesString = "0$minutesString"
+        }
+        var timeString = ""
+        if(hours == 0L) {
+            if(minutes == 0L) {
+                minutesString = ""
+            }
+            if(seconds == 0L) {
+                secondsString = "00 "
+            }
+            timeString = "$minutesString:$secondsString "
+        }else if(hours > 0L) {
+            if(minutes == 0L) {
+                minutesString = "00"
+            }
+            if(seconds == 0L) {
+                secondsString = "00 "
+            }
+            timeString = "$hours:$minutesString:$secondsString "
+        }
+        return timeString
+    }
+
+    // show bpm message popups
+    private var showHeartRateMessage = Runnable {
+        val parent = findViewById<ViewGroup>(R.id.sportGame)
+        val transition: Transition = Slide(Gravity.TOP)
+        transition.duration = 1000
+        transition.addTarget(R.id.btnMessage)
+        TransitionManager.beginDelayedTransition(parent, transition)
+        btnMessage.visibility = View.VISIBLE
+        messageHandler.postDelayed(removeHeartRateMessage, bpmMsgDuration)
+    }
+
+    // remove bpm message popups
+    private var removeHeartRateMessage = Runnable {
+        val parent = findViewById<ViewGroup>(R.id.sportGame)
+        val transition: Transition = Slide(Gravity.TOP)
+        transition.duration = 1000
+        transition.addTarget(R.id.btnMessage)
+        TransitionManager.beginDelayedTransition(parent, transition)
+        btnMessage.visibility = View.INVISIBLE
     }
 
     // show time message popups
@@ -291,6 +381,10 @@ class SportsGameActivity : AppCompatActivity() {
                 }
             animationHandler.postDelayed(this, 1500)
         }
+    }
+
+    enum class HeartRateStatus {
+        IN_THR, IN_RHR, ABOVE_THR, UNDER_THR
     }
 
 }
