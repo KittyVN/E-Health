@@ -11,37 +11,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Enter for how long you want to run for!"
+        android:text="How long do you want to run?"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:timePickerMode="spinner"
-        android:layout_marginBottom="130dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvInfoTimer" />
-
-    <TextView
-        android:id="@+id/tvRunForTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="You want to run for:"
-        android:textColor="@color/black"
-        android:layout_marginTop="-10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/timePicker"/>
-
 
     <TextView
         android:id="@+id/tvTimerHours"
@@ -51,7 +26,7 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         android:layout_marginRight="80dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvInfoTimer" />
@@ -65,23 +40,22 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         android:layout_marginRight="-80dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvInfoTimer" />
 
-    <TextView
-        android:id="@+id/tvEnteredTime"
+    <TimePicker
+        android:id="@+id/timePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="test"
-        android:textColor="@color/black"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="70dp"
+        android:layout_centerHorizontal="true"
+        android:timePickerMode="spinner"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/btnSportGame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRunForTimer"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvTimerHours" />
 
 
     <androidx.appcompat.widget.AppCompatButton
@@ -95,7 +69,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnteredTime" />
+        app:layout_constraintTop_toBottomOf="@id/timePicker"
+         />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

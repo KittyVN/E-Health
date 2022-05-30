@@ -30,9 +30,6 @@ class SportGameTimer : AppCompatActivity() {
         timePicker.hour = 0
         timePicker.minute = 30
 
-        val msg = "$hourVar : $minuteVar"
-        tvEnteredTime.text = msg
-
         onClickTime()
 
         // Navigation to Settings
@@ -47,22 +44,11 @@ class SportGameTimer : AppCompatActivity() {
 
 
     private fun onClickTime() {
-        val textView = findViewById<TextView>(R.id.tvEnteredTime)
         val timePicker = findViewById<TimePicker>(R.id.timePicker)
         timePicker.setOnTimeChangedListener { _, hour, minute -> val hour = hour
-
-            if (textView != null) {
                 hourVar = hour
                 minuteVar = minute
-                val hour = if (hour < 10) "0$hour" else hour
-                val min = if (minute < 10) "0$minute" else minute
-                // display format of time
-                val msg = "$hour : $min"
-                //Log.i(tag, "$hourVar : $minuteVar")
-                textView.text = msg
-                textView.visibility = ViewGroup.VISIBLE
             }
-        }
     }
 
 }

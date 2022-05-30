@@ -30,7 +30,7 @@ class SportsGameActivity : AppCompatActivity() {
     private var animationHandler = Handler()
     private var messageHandler = Handler()
     private var time = 0L
-    private var timeMsgDuration = 2000L
+    private var timeMsgDuration = 5000L
     private var bpmMsgDuration = 5000L
     private var currentTime = 0L
     private val tag = "[SportsGameActivity]"
@@ -297,7 +297,7 @@ class SportsGameActivity : AppCompatActivity() {
     private fun formatTime(millisLeft: Long):String {
         val hours = TimeUnit.MILLISECONDS.toHours(millisLeft) % 24
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millisLeft) % 60
-        var minutesString = minutes.toString()
+        var minutesString = "$minutes:"
         val seconds = TimeUnit.MILLISECONDS.toSeconds(millisLeft) % 60
         var secondsString = seconds.toString()
 
@@ -315,7 +315,7 @@ class SportsGameActivity : AppCompatActivity() {
             if(seconds == 0L) {
                 secondsString = "00 "
             }
-            timeString = "$minutesString:$secondsString "
+            timeString = "$minutesString$secondsString "
         }else if(hours > 0L) {
             if(minutes == 0L) {
                 minutesString = "00"
@@ -323,7 +323,7 @@ class SportsGameActivity : AppCompatActivity() {
             if(seconds == 0L) {
                 secondsString = "00 "
             }
-            timeString = "$hours:$minutesString:$secondsString "
+            timeString = "$hours:$minutesString$secondsString "
         }
         return timeString
     }
