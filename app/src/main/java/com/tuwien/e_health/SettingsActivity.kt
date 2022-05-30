@@ -31,6 +31,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
+    private val tag = "[SettingsActivity]"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class SettingsActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_settings)
 
-        val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut) as Button
+        val textBtnSignInOut: Button = findViewById(R.id.btnSignInOut)
 
         if(GoogleSignIn.getLastSignedInAccount(this) == null) {
             textBtnSignInOut.text = "Log \n in"
@@ -86,12 +87,12 @@ class SettingsActivity : AppCompatActivity() {
 
         val acct = GoogleSignIn.getLastSignedInAccount(this)
         if (acct != null) {
-            Log.i(TAG, "account signed in")
-            Log.i(TAG, "personEmail: " + acct.email)
-            Log.i(TAG, "personName: " + acct.displayName)
-            Log.i(TAG, "personId: " + acct.id)
+            Log.i(tag, "account signed in")
+            Log.i(tag, "personEmail: " + acct.email)
+            Log.i(tag, "personName: " + acct.displayName)
+            Log.i(tag, "personId: " + acct.id)
         }else{
-            Log.i(TAG, "no account")
+            Log.i(tag, "no account")
         }
     }
 
@@ -146,7 +147,7 @@ class SettingsActivity : AppCompatActivity() {
             setInfoText()
             btnSignInOut.text = "Log out"
         } catch (e: ApiException) {
-            Log.w(ContentValues.TAG, "signInResult:failed code=" + e.statusCode)
+            Log.w(tag, "signInResult:failed code=" + e.statusCode)
         }
     }
 }

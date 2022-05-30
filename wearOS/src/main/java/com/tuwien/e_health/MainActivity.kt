@@ -254,7 +254,7 @@ class MainActivity : Activity() {
                 SensorRequest.Builder()
                     .setDataSource(dataSource)
                     .setDataType(dataType)
-                    .setSamplingRate(2, TimeUnit.SECONDS)
+                    .setSamplingRate(1, TimeUnit.SECONDS)
                     .build(),
                 dataPointListener!!
             )

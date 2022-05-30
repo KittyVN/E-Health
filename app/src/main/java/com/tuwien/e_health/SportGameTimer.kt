@@ -1,5 +1,6 @@
 package com.tuwien.e_health
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ class SportGameTimer : AppCompatActivity() {
 
     private var hourVar : Int = 0
     private var minuteVar : Int = 30
+    private val tag = "[SportGameTimer]"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,9 @@ class SportGameTimer : AppCompatActivity() {
         // Navigation to Settings
         btnSportGame.setOnClickListener {
             val intent = Intent(this, SportsGameActivity::class.java)
+            val time = (hourVar *3600000 + minuteVar *60 * 1000).toLong()
+            intent.putExtra("data", time)
+            Log.i(tag, "Starting Game-Activity with time $time ..")
             startActivity(intent)
         }
     }
@@ -49,11 +54,11 @@ class SportGameTimer : AppCompatActivity() {
             if (textView != null) {
                 hourVar = hour
                 minuteVar = minute
-                val hour = if (hour < 10) "0" + hour else hour
-                val min = if (minute < 10) "0" + minute else minute
+                val hour = if (hour < 10) "0$hour" else hour
+                val min = if (minute < 10) "0$minute" else minute
                 // display format of time
                 val msg = "$hour : $min"
-                Log.i("TimeInStorage", "$hourVar : $minuteVar")
+                //Log.i(tag, "$hourVar : $minuteVar")
                 textView.text = msg
                 textView.visibility = ViewGroup.VISIBLE
             }

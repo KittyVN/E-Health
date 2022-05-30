@@ -138,14 +138,14 @@ class StatisticsActivity : AppCompatActivity() {
 
 
 
-        private fun AnimateLineChart() {
+    private fun AnimateLineChart() {
         lineChart.animateX(500, Easing.EaseInSine)
     }
 
 
-        private fun initLineChart() {
+    private fun initLineChart() {
 
-//        hide grid lines
+        //hide grid lines
         lineChart.axisLeft.setDrawGridLines(true)
         val xAxis: XAxis = lineChart.xAxis
         xAxis.setDrawGridLines(false)
@@ -200,7 +200,7 @@ class StatisticsActivity : AppCompatActivity() {
                 getScoreList(false, howFarBackForwardDay, howFarBackForwardWeek)
                 //actualSetDataToLineChart(false, howFarBackForwardDay, howFarBackForwardWeek)
             }
-        }
+    }
 
     private fun actualSetDataToLineChart(booleanDayWeek: Boolean, howFarBackForwardDay: Long, howFarBackForwardWeek: Long){
         val entriesAVG: ArrayList<Entry> = ArrayList()

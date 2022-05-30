@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private var testCounter = 0
     var toggle = false
     private var restingHeartRate = -1.0
+    private val tag = "[MainActivity]"
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,12 +169,12 @@ class MainActivity : AppCompatActivity() {
 
         val acct = GoogleSignIn.getLastSignedInAccount(this)
         if (acct != null) {
-            Log.i(TAG, "account signed in")
-            Log.i(TAG, "personEmail: " + acct.email)
-            Log.i(TAG, "personName: " + acct.displayName)
-            Log.i(TAG, "personId: " + acct.id)
+            Log.i(tag, "account signed in")
+            Log.i(tag, "personEmail: " + acct.email)
+            Log.i(tag, "personName: " + acct.displayName)
+            Log.i(tag, "personId: " + acct.id)
         } else {
-            Log.i(TAG, "no account")
+            Log.i(tag, "no account")
         }
     }
 
@@ -185,8 +186,8 @@ class MainActivity : AppCompatActivity() {
     ) {
         // extract heart rate for given time period
 
-        Log.i(TAG, "Range Start: $startTime")
-        Log.i(TAG, "Range End: $endTime")
+        Log.i(tag, "Range Start: $startTime")
+        Log.i(tag, "Range End: $endTime")
 
         // create read request
         val readRequest =
@@ -220,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "There was a problem getting the heart rate.", e)
+                    Log.w(tag, "There was a problem getting the heart rate.", e)
                 }
 
         }
@@ -233,9 +234,9 @@ class MainActivity : AppCompatActivity() {
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
         val startTime = endTime.minusHours(6)
 
-        Log.i(TAG, "Reading activities of last 6h")
-        Log.i(TAG, "Range Start: $startTime")
-        Log.i(TAG, "Range End: $endTime")
+        Log.i(tag, "Reading activities of last 6h")
+        Log.i(tag, "Range Start: $startTime")
+        Log.i(tag, "Range End: $endTime")
 
         // create activity read request
         val readRequestActivity =
@@ -282,7 +283,7 @@ class MainActivity : AppCompatActivity() {
                     read6hHeartRate(activityValues)
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "There was a problem getting the heart rate.", e)
+                    Log.w(tag, "There was a problem getting the heart rate.", e)
                 }
 
         }
@@ -292,7 +293,7 @@ class MainActivity : AppCompatActivity() {
     private fun read6hHeartRate(activityValues: MutableList<Pair<LocalDateTime, LocalDateTime>>) {
         // extract heart rate for given time period
 
-        Log.i(TAG, "Reading heart rate of last 6h")
+        Log.i(tag, "Reading heart rate of last 6h")
 
         val endTime: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
         val startTime = endTime.minusHours(6)
@@ -334,7 +335,7 @@ class MainActivity : AppCompatActivity() {
                     compute6hHeartRate(activityValues, bpmValues)
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "There was a problem getting the heart rate.", e)
+                    Log.w(tag, "There was a problem getting the heart rate.", e)
                 }
         }
     }
@@ -345,10 +346,10 @@ class MainActivity : AppCompatActivity() {
     ) {
         // calculate resting heart rate with activities- and bpm-list
 
-        Log.i(TAG, "Calculate resting heart rate of last 6h")
+        Log.i(tag, "Calculate resting heart rate of last 6h")
 
-        Log.i(TAG, "activities: " + activityValues.size)
-        Log.i(TAG, "bpm values: " + bpmValues.size)
+        Log.i(tag, "activities: " + activityValues.size)
+        Log.i(tag, "bpm values: " + bpmValues.size)
         activityValues.forEach { (start, end) ->
             //Log.i(TAG, "start: " + start)
             //Log.i(TAG, "end: " + end)
@@ -366,11 +367,11 @@ class MainActivity : AppCompatActivity() {
 
         bpmValues.forEach { pair ->
             onlyBpmValues.add(pair.second)
-            Log.i(TAG, pair.first.toString())
+            Log.i(tag, pair.first.toString())
         }
 
         val average6hHeartRate = onlyBpmValues.toDoubleArray().average()
-        Log.i(TAG, "Avg bpm over last 6 hours: $average6hHeartRate")
+        Log.i(tag, "Avg bpm over last 6 hours: $average6hHeartRate")
         restingHeartRate = average6hHeartRate
         updateMainScreen(average6hHeartRate)
 
@@ -489,7 +490,7 @@ class MainActivity : AppCompatActivity() {
             accountInfo()
             read6hActivities()
         } catch (e: ApiException) {
-            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+            Log.w(tag, "signInResult:failed code=" + e.statusCode)
         }
     }
 
