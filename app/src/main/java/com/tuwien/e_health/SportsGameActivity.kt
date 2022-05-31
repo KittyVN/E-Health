@@ -34,7 +34,7 @@ class SportsGameActivity : AppCompatActivity() {
     private var bpmMsgDuration = 5000L
     private var currentTime = 0L
     private val tag = "[SportsGameActivity]"
-    private var hr = 80L
+    private var hr = 144L
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
 
