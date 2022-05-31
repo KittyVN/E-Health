@@ -504,7 +504,7 @@ class MainActivity : AppCompatActivity() {
 
         bpmValues.forEach { pair ->
             onlyBpmValues.add(pair.second)
-            Log.i(tag, pair.first.toString())
+            //Log.i(tag, pair.first.toString())
         }
 
         val average6hHeartRate = onlyBpmValues.toDoubleArray().average()

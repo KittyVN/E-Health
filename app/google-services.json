@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "138791617002",
+    "project_id": "e-health-347815",
+    "storage_bucket": "e-health-347815.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138791617002:android:f33d7ddd3e02ccee5b3293",
+        "android_client_info": {
+          "package_name": "com.tuwien.e_health"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "138791617002-t2g7osnem6c2mep7i1nietl2pm697ge1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tuwien.e_health",
+            "certificate_hash": "9075f5fcc83f4833ac90d7eee762e679e914f8b1"
+          }
+        },
+        {
+          "client_id": "138791617002-334a5tj9850kf722ngormuq9f8rqq6ah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmchr9n-QFzndu2QKWhMylySDNdTquA4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "138791617002-334a5tj9850kf722ngormuq9f8rqq6ah.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
