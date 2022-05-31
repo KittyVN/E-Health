@@ -34,6 +34,9 @@
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/wearOS/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/ruth/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_main.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/ruth/AndroidStudioProjects/E-Health/wearOS/src/main/res/layout/activity_main.xml" value="0.6069078947368421" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_no_google_account.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.1552886962890625" />
       </map>
     </option>
   </component>
