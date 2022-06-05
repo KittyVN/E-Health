@@ -2,8 +2,10 @@ package com.tuwien.e_health
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -11,6 +13,7 @@ import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -95,12 +98,20 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         btnYearOfBirth.setOnClickListener {
-            changeYearOfBirthInDatabase(setYearOfBirthTo.text.toString().toInt())
+            if (setYearOfBirthTo.text.toString().toInt() >= 1900) {
+                changeYearOfBirthInDatabase(setYearOfBirthTo.text.toString().toInt())
+            } else {
+                Toast.makeText(this, "Please enter valid year of birth", Toast.LENGTH_SHORT).show()
+            }
             setYearOfBirthTo.text.clear()
         }
 
         fitnessSwitch.setOnClickListener {
             changeSportModeInDatabase(fitnessSwitch.isChecked)
+        }
+
+        btnAppInfo.setOnClickListener {
+            showPopup()
         }
 
     }
@@ -392,4 +403,40 @@ class SettingsActivity : AppCompatActivity() {
             Log.w(ContentValues.TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
+
+    private fun showPopup() {
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(" ")
+        builder.setPositiveButton("Ok", null)
+        var message = "Aim\n" +
+                "\n" +
+                "BPM-Pond aims to motivate you to track your heart rate over longer time and helps " +
+                "you with easy exercises to keep the heart rate under control. A lower heart rate " +
+                "over a long time lowers you risk of suffering from a cardiovascular disease.\n" +
+                "\n" +
+                "Requirement\n" +
+                "\n" +
+                "To fully use this app, you need to have a WearOS smartwatch connected to your " +
+                "smartphone. Additionally, you must have BPM-Pond and Google Fit installed on your " +
+                "phone and smartwatch.\n" +
+                "\n" +
+                "Legal disclaimer\n" +
+                "\n" +
+                "BPM-Pond is no medical product. The application only presents data from other " +
+                "products and so there is no liability for the accuracy and validity of the shown " +
+                "data. If you are not feeling well, you should always consult with a physician."
+
+        builder.setMessage(message)
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+        val okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        with(okButton) {
+            setPadding(0, 0, 20, 0)
+            setTextColor(Color.BLACK)
+        }
+    }
+
 }
