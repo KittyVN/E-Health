@@ -52,7 +52,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.*
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
     private var restingHeartRate = -1.0
     private val tag = "[MainActivity]"
     private var yearOfBirth = -1
+    private var age = -1
     private var sportMode = false
     private var knownUsers : MutableSet<String> = mutableSetOf()
 
@@ -194,7 +195,10 @@ class MainActivity : AppCompatActivity() {
         auth.currentUser?.let { database.child("users").child(it.uid) }
             ?.let { addSportModeEventListener(it) }
 
+        // Check if user is signed in (non-null) and update UI accordingly
         updateUI(currentUser)
+
+        //
         read6hActivities()
     }
 
@@ -560,6 +564,15 @@ class MainActivity : AppCompatActivity() {
                 val database = dataSnapshot.child("yearOfBirth")
                 yearOfBirth = database.value.toString().toInt()
                 Log.i(TAG,"year of birth is " + database.value)
+
+                // calculate age, set it to -1 if there is no year of birth set
+                if(yearOfBirth != -1) {
+                    var currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                    age = currentYear - yearOfBirth
+                } else {
+                    age = -1
+                }
+                Log.i(TAG,"year of birth: $yearOfBirth, age: $age")
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
