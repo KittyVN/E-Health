@@ -55,13 +55,24 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var bpmValue = 80
         /* TODO: for testing (for everyone who doesn't have a smartwatch), remove at the end
         buttonPanel.setOnClickListener {
-            val bpmValue = "87"
+            bpmValue++
+            if(bpmValue > 180) {
+                bpmValue = 80
+            }
             val dataPath = "/my_path"
-            SendMsg(dataPath, bpmValue).start()
+            SendMsg(dataPath, bpmValue.toString()).start()
         }
          */
+
+        // change button text if account saved from previous session
+        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+            buttonPanelLogIn.text = "Log Out"
+        } else {
+            buttonPanelLogIn.text = "Log In"
+        }
 
         buttonPanelLogIn.setOnClickListener {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
@@ -82,8 +93,9 @@ class MainActivity : Activity() {
         checkPermissions()
     }
 
+    // check for android permissions
     private fun checkPermissions() {
-        // check for android permissions
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
             != PackageManager.PERMISSION_GRANTED
         ) {

@@ -13,6 +13,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -20,6 +21,7 @@ import androidx.transition.TransitionManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.Wearable
 import kotlinx.android.synthetic.main.activity_sports_game.*
+import org.w3c.dom.Text
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -115,6 +117,8 @@ class SportsGameActivity : AppCompatActivity() {
 
         // go back home
         btnHome.setOnClickListener {
+            gameTimer.cancel()
+            sendStopSignal()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -122,17 +126,24 @@ class SportsGameActivity : AppCompatActivity() {
         // register to receive local broadcasts
         val messageFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver: SportsGameActivity.Receiver = SportsGameActivity().Receiver()
+        messageReceiver.setBpmTextView(tvBpm)
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
 
     }
 
     // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
+        private lateinit var tvB: TextView
+
+        fun setBpmTextView(tv: TextView){
+            tvB = tv
+        }
+
         override fun onReceive(context: Context, intent: Intent) {
-            val bpm = intent.getStringExtra("message").toString() + " "
+            val bpm = intent.getStringExtra("message").toString()
             Log.i(tag, "Incoming msg: $bpm")
-            tvBpm.text = bpm
-            hr = bpm.toLong()
+            hr = bpm.toDouble().toLong()
+            tvB.text = hr.toString() + " "
         }
     }
 
@@ -186,6 +197,8 @@ class SportsGameActivity : AppCompatActivity() {
             override fun onTick(millisLeft: Long) {
                 tvTime.text = formatTime(millisLeft)
 
+                val bpm = tvBpm.text.dropLast(1).toString()
+                hr = bpm.toLong()
                 // also sets runner animation
                 setHeartRateStatus()
 
@@ -240,6 +253,7 @@ class SportsGameActivity : AppCompatActivity() {
                     // in target heart rate area -> very good
                     //Log.i(tag, "in thr")
                     status = HeartRateStatus.IN_THR
+                    runner.setImageResource(R.drawable.runner_neutral)
                 } else if(hr > 0.85*180) {
                     // above target heart rate -> too much
                     //Log.i(tag, "above thr")
@@ -269,14 +283,14 @@ class SportsGameActivity : AppCompatActivity() {
                 } else if (status == HeartRateStatus.IN_THR && !bpmChecker) {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
-                    btnMessage.text = "Very good! Stay between " + 0.6*180 + " - " + 0.85*180 +" BPM!"
+                    btnMessage.text = "Very good! Stay between " + (0.6*180).toLong() + " - " + (0.85*180).toLong() +" BPM!"
                     showHeartRateMessage.run()
                 } else if((status == HeartRateStatus.IN_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-20000L))) {
                     bpmChecker = false
                 } else if (status == HeartRateStatus.ABOVE_THR && !bpmChecker) {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
-                    btnMessage.text = "You are trying too hard. Slow down a little bit! Go under " + 0.85*180 +" BPM!"
+                    btnMessage.text = "You are trying too hard. Slow down a little bit! Go under " + (0.85*180).toLong() +" BPM!"
                     showHeartRateMessage.run()
                 } else if((status == HeartRateStatus.ABOVE_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
                     bpmChecker = false
@@ -284,7 +298,7 @@ class SportsGameActivity : AppCompatActivity() {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
                 } else if((status == HeartRateStatus.UNDER_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
-                    btnMessage.text = "Try a bit harder! Get between " + 0.6*180 + " - " + 0.85*180 +" BPM!"
+                    btnMessage.text = "Try a bit harder! Get between " + (0.6*180).toLong() + " - " + (0.85*180).toLong() +" BPM!"
                     showHeartRateMessage.run()
                     bpmChecker = false
                 }
