@@ -321,8 +321,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO: Delete this function. It's not needed anymore
-    private fun readHeartRateData(timeInterval: TimeUnit, endTime: ZonedDateTime, startTime: ZonedDateTime) {
+    private fun readHeartRateData() {
         // extract heart rate for given time period
+
+        val endTime =  LocalDateTime.now().atZone(ZoneId.systemDefault())
+        var startTime = endTime.minusDays(1)
 
         Log.i(tag, "Range Start: $startTime")
         Log.i(tag, "Range End: $endTime")
@@ -330,9 +333,9 @@ class MainActivity : AppCompatActivity() {
         // create read request
         val readRequest =
             DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_HEART_RATE_BPM)
-                //.aggregate(DataType.TYPE_STEP_COUNT_DELTA)
-                .bucketByTime(1, timeInterval)
+                //.aggregate(DataType.TYPE_HEART_RATE_BPM)
+                .aggregate(DataType.TYPE_STEP_COUNT_DELTA)
+                .bucketByTime(1, TimeUnit.DAYS)
                 .setTimeRange(
                     startTime.toEpochSecond(), endTime.toEpochSecond(),
                     TimeUnit.SECONDS
@@ -559,11 +562,11 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.child("age")
                 age = database.value.toString().toInt()
-                Log.i(TAG,"age is " + database.value)
+                Log.i(tag,"age is " + database.value)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
             }
         }
         databaseReference.addValueEventListener(databaseListener)
@@ -574,11 +577,11 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.child("sportMode")
                 sportMode = database.value.toString().toBooleanStrict()
-                Log.i(TAG,"sport mode " + database.value)
+                Log.i(tag,"sport mode " + database.value)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
             }
         }
         databaseReference.addValueEventListener(databaseListener)
@@ -658,18 +661,18 @@ class MainActivity : AppCompatActivity() {
                                .addOnCompleteListener(this) { task ->
                                    if(task.isSuccessful) {
                                        // Sign in success, update UI with signed-in user's information
-                                       Log.d(TAG, "signInWithCredential:success")
+                                       Log.d(tag, "signInWithCredential:success")
                                        val user = auth.currentUser
                                        oldGoogleAccSignIn()
                                        updateUI(user)
                                        if (user != null) {
                                            if (knownUsers.contains(user.uid)) {
-                                               Log.d(TAG,"user already exists in database")
+                                               Log.d(tag,"user already exists in database")
                                            } else {
                                                writeNewUserToDatabase(user)
                                            }
                                        } else {
-                                           Log.d(TAG,"no user found")
+                                           Log.d(tag,"no user found")
                                        }
                                        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
 
@@ -683,31 +686,31 @@ class MainActivity : AppCompatActivity() {
 
                                    } else {
                                        // If sign in fails, display a message to the user.
-                                       Log.w(TAG, "signInWithCredential:failure", task.exception)
+                                       Log.w(tag, "signInWithCredential:failure", task.exception)
                                        updateUI(null)
                                    }
                                }
                        }
                        else -> {
                            // Shouldn't happen.
-                           Log.d(TAG, "No ID token")
+                           Log.d(tag, "No ID token")
                        }
                    }
 
                 } catch (e: ApiException) {
                     when (e.statusCode) {
                         CommonStatusCodes.CANCELED -> {
-                            Log.d(TAG, "One-tap dialog was closed.")
+                            Log.d(tag, "One-tap dialog was closed.")
                             // Don't re-prompt the user.
                             showOneTapUI = false
                             Toast.makeText(this, "Google account is needed for this app to work. Please sign in in settings.", Toast.LENGTH_LONG).show()
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
-                            Log.d(TAG, "One-tap encountered a network error.")
+                            Log.d(tag, "One-tap encountered a network error.")
                             // Try again or just ignore.
                         }
                         else -> {
-                            Log.d(TAG, "Couldn't get credential from result." +
+                            Log.d(tag, "Couldn't get credential from result." +
                                     " (${e.localizedMessage})")
                         }
                     }

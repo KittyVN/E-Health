@@ -37,6 +37,7 @@ class SportsGameActivity : AppCompatActivity() {
     private var hr = 144L
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
+    private var gameStatus = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,17 +61,10 @@ class SportsGameActivity : AppCompatActivity() {
 
         // start game
         btnStart.setOnClickListener {
+            gameStatus = true
             sendStartSignal()
             gameTimer.start()
-            runner.visibility = View.VISIBLE
-            bahn.visibility = View.INVISIBLE
-            btnStart.visibility = View.INVISIBLE
-            circleStart.visibility = View.INVISIBLE
-            circleStart2.visibility = View.INVISIBLE
-            bgWaiting.visibility = View.INVISIBLE
-            circlePause.visibility = View.VISIBLE
-            btnPause.visibility = View.VISIBLE
-            animationHandler.removeCallbacks(pulseAnimation)
+
         }
 
         // play again
@@ -103,6 +97,7 @@ class SportsGameActivity : AppCompatActivity() {
         // continue game
         btnContinue.setOnClickListener {
             gameTimer = timer(currentTime, 1000)
+            sendStartSignal()
             gameTimer.start()
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
@@ -115,6 +110,8 @@ class SportsGameActivity : AppCompatActivity() {
 
         // go back home
         btnHome.setOnClickListener {
+            sendStopSignal()
+            gameTimer.cancel()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -126,13 +123,35 @@ class SportsGameActivity : AppCompatActivity() {
 
     }
 
+    private fun wearableStart() {
+        btnStart.performClick()
+    }
+
+    private fun wearablePause() {
+        btnContinue.performClick()
+    }
+
+    private fun wearableStop() {
+        btnPause.performClick()
+    }
+
     // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val bpm = intent.getStringExtra("message").toString() + " "
-            Log.i(tag, "Incoming msg: $bpm")
-            tvBpm.text = bpm
-            hr = bpm.toLong()
+            val msg = intent.getStringExtra("message").toString() + " "
+            if(msg == "Start" && !gameStatus) {
+                wearableStart()
+            } else if(msg == "Start" && gameStatus) {
+                wearablePause()
+            }
+            else if(msg == "Stop" && gameStatus) {
+                wearableStop()
+            } else {
+                // msg is bpm value
+                Log.i(tag, "Incoming msg: $msg")
+                tvBpm.text = msg
+                hr = msg.toLong()
+            }
         }
     }
 
@@ -221,6 +240,7 @@ class SportsGameActivity : AppCompatActivity() {
             override fun onFinish() {
                 // time over
 
+                gameStatus = false
                 sendStopSignal()
                 tvTime.text = "00:00 "
                 btnStart.text = "Run again"
@@ -294,7 +314,7 @@ class SportsGameActivity : AppCompatActivity() {
 
     }
 
-    // milliseconds to hh:mm:ss
+    // milliseconds to hh:mm:ss for display
     private fun formatTime(millisLeft: Long):String {
         val hours = TimeUnit.MILLISECONDS.toHours(millisLeft) % 24
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millisLeft) % 60

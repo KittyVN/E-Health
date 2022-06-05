@@ -2,19 +2,19 @@ package com.tuwien.e_health
 
 import android.Manifest
 import android.app.Activity
-import android.os.Bundle
-
 import android.content.BroadcastReceiver
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,6 +32,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.Wearable
 import kotlinx.android.synthetic.main.activity_main.*
+import java.security.AccessController.getContext
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -50,6 +51,7 @@ class MainActivity : Activity() {
 
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
+    private var gameStatus : GameStatus? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,13 +68,20 @@ class MainActivity : Activity() {
         buttonPanelLogIn.setOnClickListener {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
                 signIn()
-                buttonPanelLogIn.text = "Log Out"
             } else {
                 logOut()
-                buttonPanelLogIn.text = "Log In"
             }
         }
 
+        btnPlay.setOnClickListener {
+            if(gameStatus == GameStatus.NOT_RUNNING) {
+                sendStartSignal()
+                btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_pause_24)
+            } else if(gameStatus == GameStatus.RUNNING){
+                sendStopSignal()
+                btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_play_arrow_24)
+            }
+        }
         // register to receive local broadcasts
         val newFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver = Receiver()
@@ -122,14 +131,32 @@ class MainActivity : Activity() {
         }
     }
 
+    // tell smartphone that sampling starts
+    private fun sendStartSignal() {
+        val message = "Start"
+        findFitnessDataSources()
+        SendMsg("/my_path", message).start()
+    }
+
+    // tell smartphone that sampling stops
+    private fun sendStopSignal() {
+        val message = "Stop"
+        removeListener()
+        SendMsg("/my_path", message).start()
+    }
+
     // receive message from smartphone
     inner class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.i(TAG, "Incoming msg: " + intent.getStringExtra("message").toString())
             if (intent.getStringExtra("message").toString() == "Start") {
                 findFitnessDataSources()
-            } else if (intent.getStringExtra("message").toString() == "Stop") {
+                btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_play_arrow_24)
+                gameStatus = GameStatus.RUNNING
+            } else if (intent.getStringExtra("message").toString() == "Stop" && gameStatus == GameStatus.RUNNING) {
                 removeListener()
+                btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_play_arrow_24)
+                gameStatus = GameStatus.NOT_RUNNING
             }
         }
     }
@@ -148,10 +175,18 @@ class MainActivity : Activity() {
     private fun logOut() {
         // log out of Google Account
 
+        if(gameStatus == GameStatus.RUNNING) {
+            removeListener()
+            sendStopSignal()
+            gameStatus = GameStatus.NOT_RUNNING
+        }
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         mGoogleSignInClient.signOut()
+        btnPlay.visibility = View.INVISIBLE
+        circlePlay.visibility = View.INVISIBLE
+        buttonPanelLogIn.text = "Log In"
     }
 
     private fun reqPermissions() {
@@ -206,6 +241,9 @@ class MainActivity : Activity() {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             accountInfo()
+            buttonPanelLogIn.text = "Log Out"
+            btnPlay.visibility = View.VISIBLE
+            circlePlay.visibility = View.VISIBLE
         } catch (e: ApiException) {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
@@ -303,4 +341,9 @@ class MainActivity : Activity() {
             }
         }
     }
+
+    enum class GameStatus {
+        RUNNING, NOT_RUNNING
+    }
+
 }
