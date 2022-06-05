@@ -2,7 +2,6 @@ package com.tuwien.e_health
 
 
 import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -98,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         // checks for logged account on startup, if not account, login
         if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             signIn()
-            Log.i(TAG,"SIGN IN CALLED")
+            Log.i(tag,"SIGN IN CALLED")
         }else{
             //already logged in
         }
@@ -180,7 +179,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onStart() {
-        Log.i(TAG,"main started")
+        Log.i(tag,"main started")
         // reload pond data on every start
         super.onStart()
 
@@ -225,14 +224,14 @@ class MainActivity : AppCompatActivity() {
                         result.pendingIntent.intentSender, REQ_ONE_TAP,
                         null, 0, 0, 0, null)
                 } catch (e: IntentSender.SendIntentException) {
-                    Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    Log.e(tag, "Couldn't start One Tap UI: ${e.localizedMessage}")
                 }
             }
             .addOnFailureListener(this) { e ->
                 // No saved credentials found. Launch the One Tap sign-up flow, or
                 // do nothing and continue presenting the signed-out UI.
-                Log.d(TAG, e.localizedMessage)
-                Log.d(TAG,"log in failure listener called since there is no account")
+                Log.d(tag, e.localizedMessage)
+                Log.d(tag,"log in failure listener called since there is no account")
                 val Intent = Intent(this, NoGoogleAccountActivity::class.java)
                 startActivity(Intent)
 
@@ -260,10 +259,10 @@ class MainActivity : AppCompatActivity() {
 
         database.child("users").child(user.uid).setValue(newUser)
             .addOnSuccessListener {
-                Log.i(TAG,"new user ${newUser.email} created in database")
+                Log.i(tag,"new user ${newUser.email} created in database")
             }
             .addOnFailureListener { e ->
-                Log.i(TAG, "there was a problem creating the new user ${newUser.email}", e)
+                Log.i(tag, "there was a problem creating the new user ${newUser.email}", e)
             }
     }
 
@@ -274,13 +273,13 @@ class MainActivity : AppCompatActivity() {
                 for(uid in database) {
                     uid.key?.let {
                         knownUsers.add(it)
-                        Log.w(TAG, "Database listener retrieved data: " + it)
+                        Log.w(tag, "Database listener retrieved data: " + it)
                     }
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
             }
         }
         databaseReference.addValueEventListener(databaseListener)
@@ -290,11 +289,11 @@ class MainActivity : AppCompatActivity() {
         val userDataListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val userData = dataSnapshot.getValue<UserData>()
-                Log.w(TAG, "User data listener retrieved data: " + userData.toString())
+                Log.w(tag, "User data listener retrieved data: " + userData.toString())
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
             }
         }
         userDataReference.addValueEventListener(userDataListener)
@@ -313,12 +312,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
-            Log.i(TAG, "account signed in")
-            Log.i(TAG, "personEmail: " + user.email)
-            Log.i(TAG, "personName: " + user.displayName)
-            Log.i(TAG, "personId: " + user.uid)
+            Log.i(tag, "account signed in")
+            Log.i(tag, "personEmail: " + user.email)
+            Log.i(tag, "personName: " + user.displayName)
+            Log.i(tag, "personId: " + user.uid)
         }else{
-            Log.i(TAG, "no account")
+            Log.i(tag, "no account")
             yearOfBirth = -1
             sportMode = false
         }
@@ -492,13 +491,13 @@ class MainActivity : AppCompatActivity() {
         Log.i(tag, "activities: " + activityValues.size)
         Log.i(tag, "bpm values: " + bpmValues.size)
         activityValues.forEach { (start, end) ->
-            //Log.i(TAG, "start: " + start)
-            //Log.i(TAG, "end: " + end)
+            //Log.i(tag, "start: " + start)
+            //Log.i(tag, "end: " + end)
             val bpmIterator = bpmValues.iterator()
             while (bpmIterator.hasNext()) {
                 val bpmPair = bpmIterator.next()
                 if (bpmPair.first > start && bpmPair.first <= end) {
-                    //Log.i(TAG, "in Activity: " + bpmPair.first)
+                    //Log.i(tag, "in Activity: " + bpmPair.first)
                     bpmIterator.remove()
                 }
             }
@@ -563,7 +562,7 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.child("yearOfBirth")
                 yearOfBirth = database.value.toString().toInt()
-                Log.i(TAG,"year of birth is " + database.value)
+                Log.i(tag,"year of birth is " + database.value)
 
                 // calculate age, set it to -1 if there is no year of birth set
                 if(yearOfBirth != -1) {
@@ -572,11 +571,11 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     age = -1
                 }
-                Log.i(TAG,"year of birth: $yearOfBirth, age: $age")
+                Log.i(tag,"year of birth: $yearOfBirth, age: $age")
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
             }
         }
         databaseReference.addValueEventListener(databaseListener)
@@ -587,11 +586,11 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val database = dataSnapshot.child("sportMode")
                 sportMode = database.value.toString().toBooleanStrict()
-                Log.i(TAG,"sport mode " + database.value)
+                Log.i(tag,"sport mode " + database.value)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
             }
         }
         databaseReference.addValueEventListener(databaseListener)
@@ -671,18 +670,18 @@ class MainActivity : AppCompatActivity() {
                                .addOnCompleteListener(this) { task ->
                                    if(task.isSuccessful) {
                                        // Sign in success, update UI with signed-in user's information
-                                       Log.d(TAG, "signInWithCredential:success")
+                                       Log.d(tag, "signInWithCredential:success")
                                        val user = auth.currentUser
                                        oldGoogleAccSignIn()
                                        updateUI(user)
                                        if (user != null) {
                                            if (knownUsers.contains(user.uid)) {
-                                               Log.d(TAG,"user already exists in database")
+                                               Log.d(tag,"user already exists in database")
                                            } else {
                                                writeNewUserToDatabase(user)
                                            }
                                        } else {
-                                           Log.d(TAG,"no user found")
+                                           Log.d(tag,"no user found")
                                        }
                                        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
 
@@ -696,31 +695,31 @@ class MainActivity : AppCompatActivity() {
 
                                    } else {
                                        // If sign in fails, display a message to the user.
-                                       Log.w(TAG, "signInWithCredential:failure", task.exception)
+                                       Log.w(tag, "signInWithCredential:failure", task.exception)
                                        updateUI(null)
                                    }
                                }
                        }
                        else -> {
                            // Shouldn't happen.
-                           Log.d(TAG, "No ID token")
+                           Log.d(tag, "No ID token")
                        }
                    }
 
                 } catch (e: ApiException) {
                     when (e.statusCode) {
                         CommonStatusCodes.CANCELED -> {
-                            Log.d(TAG, "One-tap dialog was closed.")
+                            Log.d(tag, "One-tap dialog was closed.")
                             // Don't re-prompt the user.
                             showOneTapUI = false
                             Toast.makeText(this, "Google account is needed for this app to work. Please sign in in settings.", Toast.LENGTH_LONG).show()
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
-                            Log.d(TAG, "One-tap encountered a network error.")
+                            Log.d(tag, "One-tap encountered a network error.")
                             // Try again or just ignore.
                         }
                         else -> {
-                            Log.d(TAG, "Couldn't get credential from result." +
+                            Log.d(tag, "Couldn't get credential from result." +
                                     " (${e.localizedMessage})")
                         }
                     }
