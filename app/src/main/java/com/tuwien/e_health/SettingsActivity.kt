@@ -8,6 +8,7 @@ import android.content.IntentSender
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.Switch
@@ -97,13 +98,32 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        btnYearOfBirth.setOnClickListener {
-            if (setYearOfBirthTo.text.toString().toInt() >= 1900) {
-                changeYearOfBirthInDatabase(setYearOfBirthTo.text.toString().toInt())
-            } else {
-                Toast.makeText(this, "Please enter valid year of birth", Toast.LENGTH_SHORT).show()
+        btnChangeAge.setOnClickListener {
+            if(tvEditBirthday.visibility == View.GONE && etBirthday.visibility == View.GONE) {
+                // open edit widgets
+                tvEditBirthday.visibility = View.VISIBLE
+                etBirthday.visibility = View.VISIBLE
+                btnChangeAge.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_check_24)
+            } else if (tvEditBirthday.visibility == View.VISIBLE && etBirthday.visibility == View.VISIBLE){
+                // validate input
+                if(etBirthday.text.toString().isEmpty()) {
+                    // nothing entered, don't change age
+                    tvEditBirthday.visibility = View.GONE
+                    etBirthday.visibility = View.GONE
+                    btnChangeAge.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_edit_24)
+                    return@setOnClickListener
+                }
+                if (etBirthday.text.toString().toInt() >= 1900) {
+                    changeYearOfBirthInDatabase(etBirthday.text.toString().toInt())
+                } else {
+                    Toast.makeText(this, "Please enter valid year of birth", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                etBirthday.text.clear()
+                tvEditBirthday.visibility = View.GONE
+                etBirthday.visibility = View.GONE
+                btnChangeAge.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_edit_24)
             }
-            setYearOfBirthTo.text.clear()
         }
 
         fitnessSwitch.setOnClickListener {
@@ -209,7 +229,7 @@ class SettingsActivity : AppCompatActivity() {
         // log out of Google Account
 
         Firebase.auth.signOut()
-        yearOfBirthInfo.text = "Your year of birth is not yet set."
+        tvBirthday.text = "Your year of birth is not yet set."
         fitnessSwitch.isChecked = false
 
         // Old sign out function code, still needed. See comment in MainActivity's googleAccSignIn function.
@@ -269,7 +289,7 @@ class SettingsActivity : AppCompatActivity() {
                 val database = dataSnapshot.child("yearOfBirth")
                 val  yearOfBirth = database.value.toString().toInt()
                 Log.i(TAG,"year of birth is " + database.value)
-                val yearOfBirthInfo : TextView = findViewById(R.id.yearOfBirthInfo) as TextView
+                val yearOfBirthInfo : TextView = findViewById(R.id.tvBirthday)
                 if (yearOfBirth != -1) {
                     yearOfBirthInfo.text = "You were born in $yearOfBirth."
                 } else {
@@ -419,7 +439,7 @@ class SettingsActivity : AppCompatActivity() {
                 "\n" +
                 "To fully use this app, you need to have a WearOS smartwatch connected to your " +
                 "smartphone. Additionally, you must have BPM-Pond and Google Fit installed on your " +
-                "phone and smartwatch.\n" +
+                "phone and smartwatch. Your smartwatch has to be coupled with the Google Fit\n" +
                 "\n" +
                 "Legal disclaimer\n" +
                 "\n" +

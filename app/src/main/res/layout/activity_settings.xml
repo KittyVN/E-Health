@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-
-    <TextView
-        android:id="@+id/fitnessModeInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="13dp"
-        android:text="(for people who do regular exercise)"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle=""
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fitnessModeQuestion" />
-
     <TextView
         android:id="@+id/tvAccountName"
         android:layout_width="wrap_content"
@@ -54,7 +40,6 @@
         android:layout_marginTop="10dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toBottomOf="@+id/tvAccountEmail" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -71,30 +56,54 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/yearOfBirthInfo"
+        android:id="@+id/tvBirthday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:text="Your age is not yet set."
+        android:layout_marginTop="30dp"
+        android:text="Your age is not set yet."
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnChangeAge"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button"
+        android:drawableBottom="@drawable/ic_baseline_edit_24"
+        app:layout_constraintStart_toEndOf="@+id/tvBirthday"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
     <TextView
-        android:id="@+id/yearOfBirthInfo2"
+        android:id="@+id/tvEditBirthday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="21dp"
         android:text="Enter year of birth:"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle=""
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/yearOfBirthInfo" />
+        app:layout_constraintTop_toBottomOf="@+id/tvBirthday"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/etBirthday"
+        android:layout_width="132dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/tvEditBirthday"
+        app:layout_constraintTop_toBottomOf="@+id/tvBirthday"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/fitnessModeQuestion"
@@ -104,20 +113,10 @@
         android:layout_marginTop="37dp"
         android:text="Enable Fitness Mode"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle=""
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setYearOfBirthTo" />
-
-    <Button
-        android:id="@+id/btnYearOfBirth"
-        android:layout_width="132dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
-        android:text="update"
-        app:layout_constraintStart_toEndOf="@+id/setYearOfBirthTo"
-        app:layout_constraintTop_toBottomOf="@+id/yearOfBirthInfo" />
+        app:layout_constraintTop_toBottomOf="@+id/etBirthday" />
 
     <Switch
         android:id="@+id/fitnessSwitch"
@@ -127,26 +126,31 @@
         android:layout_marginTop="25dp"
         android:checked="false"
         app:layout_constraintStart_toEndOf="@+id/fitnessModeQuestion"
-        app:layout_constraintTop_toBottomOf="@+id/setYearOfBirthTo" />
+        app:layout_constraintTop_toBottomOf="@+id/etBirthday"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-    <EditText
-        android:id="@+id/setYearOfBirthTo"
-        android:layout_width="132dp"
-        android:layout_height="48dp"
+    <TextView
+        android:id="@+id/tvFitnessModeInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:inputType="number"
-        app:layout_constraintStart_toEndOf="@+id/yearOfBirthInfo2"
-        app:layout_constraintTop_toBottomOf="@+id/yearOfBirthInfo" />
+        android:layout_marginTop="13dp"
+        android:text="(for people who exercise regularly)"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fitnessModeQuestion" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAppInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="28dp"
-        android:text="info"
+        android:text="Info"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

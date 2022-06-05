@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="I did not only recently sign in to my Google account, why am I still getting this message?"
+        android:text="I did not recently sign in to my Google account, why am I still getting this message?"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
