@@ -36,7 +36,7 @@ class NoGoogleAccountActivity : AppCompatActivity() {
         builder.setTitle(" ")
         builder.setPositiveButton("Ok", null)
         var message = "If you have disabled the sign in prompt too many times, it might be on a cooldown, not letting you sign in at the moment. \n" +
-                "You can fix this by clearing your Google Play services' app storage in your devise settings. " +
+                "You can fix this by clearing your Google Play services' app storage in your device settings. " +
                 "After you have done that, restart this app. " +
                 "You might have to wait a few minutes again for it to work."
 

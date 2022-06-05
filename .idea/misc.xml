@@ -4,9 +4,6 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/j/AndroidStudioProjects/EHealth/app/src/main/res/layout/activity_main.xml" value="0.5541666666666667" />
-        <entry key="..\:/Users/j/StudioProjects/E-Health/app/src/main/res/layout/activity_main.xml" value="0.30978260869565216" />
-        <entry key="..\:/Users/j/StudioProjects/E-Health/app/src/main/res/layout/activity_sport_game_timer.xml" value="0.3171875" />
-        <entry key="..\:/Users/j/StudioProjects/E-Health/app/src/main/res/layout/activity_statistics.xml" value="0.3171875" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable-v24/LogInOutbtn.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable-v24/btn.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/bloginoutbtn.xml" value="0.1" />
@@ -17,26 +14,19 @@
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.2015" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_auto_graph_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_mood_24.xml" value="0.1" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.1515" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_baseline_sports_handball_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/ic_outline_info_24.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/info_btn.xml" value="0.1" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/messageButton.xml" value="0.3565" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/rounded_button.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/drawable/smiley.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_settings.xml" value="0.17831813576494426" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_sport_game_timer.xml" value="0.22864583333333333" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_sports_game.xml" value="0.1" />
         <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_statistics.xml" value="0.14266304347826086" />
-        <entry key="..\:/Users/nikla/AndroidStudioProjects/E-Health/wearOS/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="..\:/Users/ruth/AndroidStudioProjects/E-Health/app/src/main/res/layout/activity_main.xml" value="0.15353260869565216" />
-        <entry key="..\:/Users/ruth/AndroidStudioProjects/E-Health/wearOS/src/main/res/layout/activity_main.xml" value="0.6069078947368421" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_no_google_account.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.1552886962890625" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.3162872314453125" />
       </map>
     </option>
   </component>

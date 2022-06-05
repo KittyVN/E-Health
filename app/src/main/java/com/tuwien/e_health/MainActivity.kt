@@ -52,7 +52,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.*
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
     var toggle = false
     private var restingHeartRate = -1.0
     private val tag = "[MainActivity]"
+    private var yearOfBirth = -1
     private var age = -1
     private var sportMode = false
     private var knownUsers : MutableSet<String> = mutableSetOf()
@@ -186,15 +187,18 @@ class MainActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly
         val currentUser = auth.currentUser
 
-        // adds listener that reads current user's age
+        // adds listener that reads current user's year of birth
         auth.currentUser?.let { database.child("users").child(it.uid) }
-            ?.let { addAgeEventListener(it) }
+            ?.let { addYearOfBirthEventListener(it) }
 
         // adds listener that reads current user's sport mode setting
         auth.currentUser?.let { database.child("users").child(it.uid) }
             ?.let { addSportModeEventListener(it) }
 
+        // Check if user is signed in (non-null) and update UI accordingly
         updateUI(currentUser)
+
+        //
         read6hActivities()
     }
 
@@ -315,7 +319,7 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "personId: " + user.uid)
         }else{
             Log.i(TAG, "no account")
-            age = -1
+            yearOfBirth = -1
             sportMode = false
         }
     }
@@ -554,12 +558,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun addAgeEventListener(databaseReference: DatabaseReference) {
+    private fun addYearOfBirthEventListener(databaseReference: DatabaseReference) {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val database = dataSnapshot.child("age")
-                age = database.value.toString().toInt()
-                Log.i(TAG,"age is " + database.value)
+                val database = dataSnapshot.child("yearOfBirth")
+                yearOfBirth = database.value.toString().toInt()
+                Log.i(TAG,"year of birth is " + database.value)
+
+                // calculate age, set it to -1 if there is no year of birth set
+                if(yearOfBirth != -1) {
+                    var currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                    age = currentYear - yearOfBirth
+                } else {
+                    age = -1
+                }
+                Log.i(TAG,"year of birth: $yearOfBirth, age: $age")
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -674,9 +687,9 @@ class MainActivity : AppCompatActivity() {
                                        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
 
                                        // listeners are called again late after sign in to get accurate account data
-                                       // adds listener that reads current user's age
+                                       // adds listener that reads current user's year of birth
                                        auth.currentUser?.let { database.child("users").child(it.uid) }
-                                           ?.let { addAgeEventListener(it) }
+                                           ?.let { addYearOfBirthEventListener(it) }
                                        // adds listener that reads current user's sport mode setting
                                        auth.currentUser?.let { database.child("users").child(it.uid) }
                                            ?.let { addSportModeEventListener(it) }

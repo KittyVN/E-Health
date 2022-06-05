@@ -4,7 +4,7 @@ data class UserData
     (
     val email: String? = null,
     val personName: String? = null,
-    val age: Long? = -1,
+    val yearOfBirth: Long? = -1,
     val sportMode: Boolean = false
     )
 {

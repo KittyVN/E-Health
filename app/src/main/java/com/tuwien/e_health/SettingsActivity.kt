@@ -2,8 +2,10 @@ package com.tuwien.e_health
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -11,6 +13,7 @@ import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -34,7 +37,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity() {
@@ -95,13 +97,21 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        btnAge.setOnClickListener {
-            changeAgeInDatabase(setAgeTo.text.toString().toInt())
-            setAgeTo.text.clear()
+        btnYearOfBirth.setOnClickListener {
+            if (setYearOfBirthTo.text.toString().toInt() >= 1900) {
+                changeYearOfBirthInDatabase(setYearOfBirthTo.text.toString().toInt())
+            } else {
+                Toast.makeText(this, "Please enter valid year of birth", Toast.LENGTH_SHORT).show()
+            }
+            setYearOfBirthTo.text.clear()
         }
 
         fitnessSwitch.setOnClickListener {
             changeSportModeInDatabase(fitnessSwitch.isChecked)
+        }
+
+        btnAppInfo.setOnClickListener {
+            showPopup()
         }
 
     }
@@ -117,9 +127,9 @@ class SettingsActivity : AppCompatActivity() {
             tvAccountName.setText("Hello " + user.displayName)
             tvAccountEmail.setText(user.email)
 
-            // adds listener that reads current user's age
+            // adds listener that reads current user's year of birth
             auth.currentUser?.let { database.child("users").child(it.uid) }
-                ?.let { addAgeEventListener(it) }
+                ?.let { addYearOfBirthEventListener(it) }
 
             // adds listener that reads current user's sport mode setting
             auth.currentUser?.let { database.child("users").child(it.uid) }
@@ -199,7 +209,7 @@ class SettingsActivity : AppCompatActivity() {
         // log out of Google Account
 
         Firebase.auth.signOut()
-        ageInfo.text = "Your age is not yet set."
+        yearOfBirthInfo.text = "Your year of birth is not yet set."
         fitnessSwitch.isChecked = false
 
         // Old sign out function code, still needed. See comment in MainActivity's googleAccSignIn function.
@@ -247,23 +257,23 @@ class SettingsActivity : AppCompatActivity() {
         databaseReference.addValueEventListener(databaseListener)
     }
 
-    private fun changeAgeInDatabase(age: Int) {
+    private fun changeYearOfBirthInDatabase(yearOfBirth: Int) {
         auth.currentUser?.let {
-            database.child("users").child(it.uid).child("age").setValue(age)
+            database.child("users").child(it.uid).child("yearOfBirth").setValue(yearOfBirth)
         }
     }
 
-    private fun addAgeEventListener(databaseReference: DatabaseReference) {
+    private fun addYearOfBirthEventListener(databaseReference: DatabaseReference) {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val database = dataSnapshot.child("age")
-                val  age = database.value.toString().toInt()
-                Log.i(TAG,"age is " + database.value)
-                val ageInfo : TextView = findViewById(R.id.ageInfo) as TextView
-                if (age != -1) {
-                    ageInfo.text = "You are $age years old."
+                val database = dataSnapshot.child("yearOfBirth")
+                val  yearOfBirth = database.value.toString().toInt()
+                Log.i(TAG,"year of birth is " + database.value)
+                val yearOfBirthInfo : TextView = findViewById(R.id.yearOfBirthInfo) as TextView
+                if (yearOfBirth != -1) {
+                    yearOfBirthInfo.text = "You were born in $yearOfBirth."
                 } else {
-                    ageInfo.text = "Your age is not yet set."
+                    yearOfBirthInfo.text = "Year of birth unknown."
                 }
             }
 
@@ -393,4 +403,40 @@ class SettingsActivity : AppCompatActivity() {
             Log.w(ContentValues.TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
+
+    private fun showPopup() {
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(" ")
+        builder.setPositiveButton("Ok", null)
+        var message = "Aim\n" +
+                "\n" +
+                "BPM-Pond aims to motivate you to track your heart rate over longer time and helps " +
+                "you with easy exercises to keep the heart rate under control. A lower heart rate " +
+                "over a long time lowers you risk of suffering from a cardiovascular disease.\n" +
+                "\n" +
+                "Requirement\n" +
+                "\n" +
+                "To fully use this app, you need to have a WearOS smartwatch connected to your " +
+                "smartphone. Additionally, you must have BPM-Pond and Google Fit installed on your " +
+                "phone and smartwatch.\n" +
+                "\n" +
+                "Legal disclaimer\n" +
+                "\n" +
+                "BPM-Pond is no medical product. The application only presents data from other " +
+                "products and so there is no liability for the accuracy and validity of the shown " +
+                "data. If you are not feeling well, you should always consult with a physician."
+
+        builder.setMessage(message)
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+        val okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        with(okButton) {
+            setPadding(0, 0, 20, 0)
+            setTextColor(Color.BLACK)
+        }
+    }
+
 }
