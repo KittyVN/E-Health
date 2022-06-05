@@ -15,12 +15,12 @@
         android:orientation="vertical"
         app:boxedEdges="all">
 
-        <!-- TODO: for testing (if no smartwatch), remove later-->
+        <!-- TODO: for testing (if no smartwatch), remove later
         <Button
             android:id="@+id/buttonPanel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bpm"/> <!---->
+            android:text="Bpm"/> -->
 
         <Button
             android:id="@+id/buttonPanelLogIn"

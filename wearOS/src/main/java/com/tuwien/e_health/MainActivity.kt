@@ -64,7 +64,7 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         var bpmValue = 80
-        ///* TODO: for testing (for everyone who doesn't have a smartwatch), remove at the end
+        /* TODO: for testing (for everyone who doesn't have a smartwatch), remove at the end
         buttonPanel.setOnClickListener {
             bpmValue++
             if(bpmValue > 180) {
@@ -73,7 +73,7 @@ class MainActivity : Activity() {
             val dataPath = "/my_path"
             SendMsg(dataPath, bpmValue.toString()).start()
         }
-         //*/
+         */
 
         // change button text if account saved from previous session
         if (GoogleSignIn.getLastSignedInAccount(this) != null) {
@@ -110,14 +110,14 @@ class MainActivity : Activity() {
     // tell smartphone that sampling starts
     private fun sendStartSignal() {
         val message = "Start"
-        //findFitnessDataSources()
+        findFitnessDataSources()
         SendMsg("/my_path", message).start()
     }
 
     // tell smartphone that sampling stops
     private fun sendStopSignal() {
         val message = "Stop"
-        //removeListener()
+        removeListener()
         SendMsg("/my_path", message).start()
     }
 
@@ -169,18 +169,18 @@ class MainActivity : Activity() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.i(TAG, "Incoming msg: " + intent.getStringExtra("message").toString())
             if (intent.getStringExtra("message").toString() == "Start") {
-                //findFitnessDataSources()
+                findFitnessDataSources()
                 lastMsgTimeStamp = LocalDateTime.now()
                 timeChecker.run()
                 btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_pause_24)
                 gameStatus = GameStatus.RUNNING
             } else if (intent.getStringExtra("message").toString() == "Stop" && gameStatus == GameStatus.RUNNING) {
-                //removeListener()
+                removeListener()
                 messageHandler.removeCallbacks(timeChecker)
                 btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_play_arrow_24)
                 gameStatus = GameStatus.NOT_RUNNING
             } else if (intent.getStringExtra("message").toString() == "Stop" && gameStatus == GameStatus.NOT_RUNNING) {
-                //removeListener()
+                removeListener()
                 gameStatus = GameStatus.NOT_RUNNING
             } else {
                 lastMsgTimeStamp = LocalDateTime
