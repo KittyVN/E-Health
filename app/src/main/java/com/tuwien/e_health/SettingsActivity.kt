@@ -34,7 +34,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity() {
@@ -95,9 +94,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        btnAge.setOnClickListener {
-            changeAgeInDatabase(setAgeTo.text.toString().toInt())
-            setAgeTo.text.clear()
+        btnYearOfBirth.setOnClickListener {
+            changeYearOfBirthInDatabase(setYearOfBirthTo.text.toString().toInt())
+            setYearOfBirthTo.text.clear()
         }
 
         fitnessSwitch.setOnClickListener {
@@ -117,9 +116,9 @@ class SettingsActivity : AppCompatActivity() {
             tvAccountName.setText("Hello " + user.displayName)
             tvAccountEmail.setText(user.email)
 
-            // adds listener that reads current user's age
+            // adds listener that reads current user's year of birth
             auth.currentUser?.let { database.child("users").child(it.uid) }
-                ?.let { addAgeEventListener(it) }
+                ?.let { addYearOfBirthEventListener(it) }
 
             // adds listener that reads current user's sport mode setting
             auth.currentUser?.let { database.child("users").child(it.uid) }
@@ -199,7 +198,7 @@ class SettingsActivity : AppCompatActivity() {
         // log out of Google Account
 
         Firebase.auth.signOut()
-        ageInfo.text = "Your age is not yet set."
+        yearOfBirthInfo.text = "Your year of birth is not yet set."
         fitnessSwitch.isChecked = false
 
         // Old sign out function code, still needed. See comment in MainActivity's googleAccSignIn function.
@@ -247,23 +246,23 @@ class SettingsActivity : AppCompatActivity() {
         databaseReference.addValueEventListener(databaseListener)
     }
 
-    private fun changeAgeInDatabase(age: Int) {
+    private fun changeYearOfBirthInDatabase(yearOfBirth: Int) {
         auth.currentUser?.let {
-            database.child("users").child(it.uid).child("age").setValue(age)
+            database.child("users").child(it.uid).child("yearOfBirth").setValue(yearOfBirth)
         }
     }
 
-    private fun addAgeEventListener(databaseReference: DatabaseReference) {
+    private fun addYearOfBirthEventListener(databaseReference: DatabaseReference) {
         val databaseListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val database = dataSnapshot.child("age")
-                val  age = database.value.toString().toInt()
-                Log.i(TAG,"age is " + database.value)
-                val ageInfo : TextView = findViewById(R.id.ageInfo) as TextView
-                if (age != -1) {
-                    ageInfo.text = "You are $age years old."
+                val database = dataSnapshot.child("yearOfBirth")
+                val  yearOfBirth = database.value.toString().toInt()
+                Log.i(TAG,"year of birth is " + database.value)
+                val yearOfBirthInfo : TextView = findViewById(R.id.yearOfBirthInfo) as TextView
+                if (yearOfBirth != -1) {
+                    yearOfBirthInfo.text = "You were born in $yearOfBirth."
                 } else {
-                    ageInfo.text = "Your age is not yet set."
+                    yearOfBirthInfo.text = "Year of birth unknown."
                 }
             }
 
