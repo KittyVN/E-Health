@@ -1,8 +1,7 @@
 package com.tuwien.e_health
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Intent
+import android.content.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -10,8 +9,6 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.content.Context
-import android.content.IntentFilter
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
@@ -23,6 +20,9 @@ import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.Wearable
 import kotlinx.android.synthetic.main.activity_sports_game.*
 import org.w3c.dom.Text
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.ZoneId
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -107,6 +107,7 @@ class SportsGameActivity : AppCompatActivity() {
         btnContinue.setOnClickListener {
             gameTimer = timer(currentTime, 1000)
             gameTimer.start()
+            sendStartSignal()
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
             circleHome.visibility = View.INVISIBLE
@@ -135,6 +136,7 @@ class SportsGameActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
+        Log.i(tag, "Detected Game exit, stop sampling")
         // tell smartwatch to stop sampling heart rate
         sendStopSignal()
 
@@ -168,6 +170,12 @@ class SportsGameActivity : AppCompatActivity() {
     // tell wearable to stop heart rate sampling
     private fun sendStopSignal() {
         val message = "Stop"
+        SendMsg("/my_path", message).start()
+    }
+
+    // tell wearable app is still alive at this time
+    private fun sendTimeStamp() {
+        val message = LocalDateTime.now().toString()
         SendMsg("/my_path", message).start()
     }
 
@@ -240,7 +248,7 @@ class SportsGameActivity : AppCompatActivity() {
                     showTimeMessage.run()
                 }
                 currentTime = millisLeft
-
+                sendTimeStamp()
             }
 
             override fun onFinish() {

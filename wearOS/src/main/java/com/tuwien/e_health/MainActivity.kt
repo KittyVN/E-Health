@@ -2,19 +2,18 @@ package com.tuwien.e_health
 
 import android.Manifest
 import android.app.Activity
-import android.os.Bundle
-
 import android.content.BroadcastReceiver
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,6 +31,8 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.Wearable
 import kotlinx.android.synthetic.main.activity_main.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -50,6 +51,7 @@ class MainActivity : Activity() {
 
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
+    private var messageHandler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +70,7 @@ class MainActivity : Activity() {
          */
 
         // change button text if account saved from previous session
-        if (GoogleSignIn.getLastSignedInAccount(this) == null) {
+        if (GoogleSignIn.getLastSignedInAccount(this) != null) {
             buttonPanelLogIn.text = "Log Out"
         } else {
             buttonPanelLogIn.text = "Log In"
@@ -77,10 +79,8 @@ class MainActivity : Activity() {
         buttonPanelLogIn.setOnClickListener {
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
                 signIn()
-                buttonPanelLogIn.text = "Log Out"
             } else {
                 logOut()
-                buttonPanelLogIn.text = "Log In"
             }
         }
 
@@ -92,6 +92,7 @@ class MainActivity : Activity() {
         // check for android permissions
         checkPermissions()
     }
+
 
     // check for android permissions
     private fun checkPermissions() {
@@ -136,15 +137,43 @@ class MainActivity : Activity() {
 
     // receive message from smartphone
     inner class Receiver : BroadcastReceiver() {
+        private lateinit var lastMsgTimeStamp: LocalDateTime
+
         override fun onReceive(context: Context, intent: Intent) {
             Log.i(TAG, "Incoming msg: " + intent.getStringExtra("message").toString())
             if (intent.getStringExtra("message").toString() == "Start") {
                 findFitnessDataSources()
+                lastMsgTimeStamp = LocalDateTime.now()
+                timeChecker.run()
             } else if (intent.getStringExtra("message").toString() == "Stop") {
                 removeListener()
+                messageHandler.removeCallbacks(timeChecker)
+            } else {
+                lastMsgTimeStamp = LocalDateTime
+                    .parse(intent.getStringExtra("message").toString(), DateTimeFormatter.ISO_DATE_TIME)
+
+            }
+        }
+
+        // pulsing animation for start button
+        private var timeChecker = object : Runnable {
+            override fun run() {
+                if(::lastMsgTimeStamp.isInitialized) {
+                    Log.i(TAG, "$lastMsgTimeStamp " + LocalDateTime.now())
+                    if (lastMsgTimeStamp < LocalDateTime.now().minusSeconds(10)) {
+                        // no alive msg from smartwatch since given time -> turn off sampling
+                        removeListener()
+                        Log.i(TAG, "I haven't received a msg since $lastMsgTimeStamp")
+                        messageHandler.removeCallbacks(this)
+                        return
+                    }
+                }
+                messageHandler.postDelayed(this, 1000)
             }
         }
     }
+
+
 
     private fun signIn() {
         // log in with Google Account
@@ -164,6 +193,7 @@ class MainActivity : Activity() {
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         mGoogleSignInClient.signOut()
+        buttonPanelLogIn.text = "Log In"
     }
 
     private fun reqPermissions() {
@@ -218,6 +248,7 @@ class MainActivity : Activity() {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             accountInfo()
+            buttonPanelLogIn.text = "Log Out"
         } catch (e: ApiException) {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
