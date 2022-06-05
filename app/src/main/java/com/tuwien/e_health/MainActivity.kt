@@ -756,12 +756,12 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(" ")
         builder.setPositiveButton("Ok", null)
-        val messageBasic = "Your resting heart rate of the past six hours is $restingHeartRate. "
+        var messageBasic = "Your resting heart rate of the past six hours is " + restingHeartRate.toLong() + ". "
         var messageAdvanced = ""
 
         if (restingHeartRate <= 0 || restingHeartRate.isNaN()) {
             // no rhr detected
-
+            messageBasic = "Your resting heart rate of the past six hours is $restingHeartRate. "
             messageAdvanced =
                 "Unfortunately we could not detect a heart rate. Maybe check your Google Fit Account."
             builder.setIcon(R.drawable.ic_baseline_help_outline_24)
