@@ -13,6 +13,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -37,6 +38,8 @@ class SportsGameActivity : AppCompatActivity() {
     private var hr = 144L
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
+    private lateinit var bpmText: TextView
+    private var onCreate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +48,12 @@ class SportsGameActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_sports_game)
+
+        bpmText=findViewById(R.id.tvBpm)
+        Log.i(tag, bpmText.text.toString())
+
+        onCreate = true
+        Log.i(tag, "onCreate finished $onCreate")
 
         // get time from timer spinner activity
         val passedTime = intent.getLongExtra("data", 60000L)
@@ -123,17 +132,23 @@ class SportsGameActivity : AppCompatActivity() {
         val messageFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver: SportsGameActivity.Receiver = SportsGameActivity().Receiver()
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
-
     }
 
     // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val bpm = intent.getStringExtra("message").toString() + " "
-            Log.i(tag, "Incoming msg: $bpm")
-            tvBpm.text = bpm
-            hr = bpm.toLong()
+            Log.i(tag, "$onCreate")
+            //if(onCreate){
+                val bpm = intent.getStringExtra("message").toString()
+                Log.i(tag, "Incoming msg: $bpm")
+                hr = bpm.toDouble().toLong()
+                test()
+            //}
         }
+    }
+
+    private fun test(){
+        bpmText.text= "$hr "
     }
 
     // tell wearable to start heart rate sampling
