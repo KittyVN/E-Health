@@ -1,5 +1,6 @@
 package com.tuwien.e_health
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +26,7 @@ import org.w3c.dom.Text
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
-// TODO: heart rate impact -> animations and messages
+// TODO: heart rate impact -> animations
 
 class SportsGameActivity : AppCompatActivity() {
 
@@ -131,6 +132,17 @@ class SportsGameActivity : AppCompatActivity() {
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        // tell smartwatch to stop sampling heart rate
+        sendStopSignal()
+
+        // goto main screen, not game timer
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
     // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
         private lateinit var tvB: TextView
@@ -143,7 +155,7 @@ class SportsGameActivity : AppCompatActivity() {
             val bpm = intent.getStringExtra("message").toString()
             Log.i(tag, "Incoming msg: $bpm")
             hr = bpm.toDouble().toLong()
-            tvB.text = hr.toString() + " "
+            tvB.text = "$hr "
         }
     }
 
