@@ -18,11 +18,21 @@ import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.Wearable
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_sports_game.*
 import org.w3c.dom.Text
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
+import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -30,6 +40,8 @@ import java.util.concurrent.TimeUnit
 
 class SportsGameActivity : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
     private var animationHandler = Handler()
     private var messageHandler = Handler()
     private var time = 0L
@@ -41,6 +53,12 @@ class SportsGameActivity : AppCompatActivity() {
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
 
+    // variables that have up do date user data stored. if yearOfBirth and age have their standard
+    // values of -1 there is no user signed in.
+    private var yearOfBirth = -1
+    private var age = -1
+    private var sportMode = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -48,6 +66,12 @@ class SportsGameActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_sports_game)
+
+        // gets instance of FirebaseAuth object
+        auth = Firebase.auth
+
+        // gets instance of DatabaseReference object
+        database = Firebase.database("https://e-health-347815-default-rtdb.europe-west1.firebasedatabase.app").reference
 
         // get time from timer spinner activity
         val passedTime = intent.getLongExtra("data", 60000L)
@@ -131,6 +155,24 @@ class SportsGameActivity : AppCompatActivity() {
         messageReceiver.setBpmTextView(tvBpm)
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // Check if user is signed in (non-null) and update UI accordingly
+        val currentUser = auth.currentUser
+
+        // adds listener that reads current user's year of birth
+        auth.currentUser?.let { database.child("users").child(it.uid) }
+            ?.let { addYearOfBirthEventListener(it) }
+
+        // adds listener that reads current user's sport mode setting
+        auth.currentUser?.let { database.child("users").child(it.uid) }
+            ?.let { addSportModeEventListener(it) }
+
+        // Check if user is signed in (non-null) and update UI accordingly
+        updateUI(currentUser)
     }
 
     override fun onBackPressed() {
@@ -416,6 +458,65 @@ class SportsGameActivity : AppCompatActivity() {
                 }
             animationHandler.postDelayed(this, 1500)
         }
+    }
+
+    // logs user data if user is signed it, resets user variables if user is logged out
+    private fun updateUI(user: FirebaseUser?) {
+        if (user != null) {
+            Log.i(tag, "account signed in")
+            Log.i(tag, "personEmail: " + user.email)
+            Log.i(tag, "personName: " + user.displayName)
+            Log.i(tag, "personId: " + user.uid)
+        }else{
+            Log.i(tag, "no account")
+            yearOfBirth = -1
+            age = -1
+            sportMode = false
+            Log.i(tag, "year of birth is $yearOfBirth")
+            Log.i(tag, "age is $age")
+            Log.i(tag, "sport mode $sportMode")
+        }
+    }
+
+    // reads user's year of birth out of database and calculates age
+    private fun addYearOfBirthEventListener(databaseReference: DatabaseReference) {
+        val databaseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val database = dataSnapshot.child("yearOfBirth")
+                yearOfBirth = database.value.toString().toInt()
+                Log.i(tag,"year of birth is " + database.value)
+
+                // calculate age, set it to -1 if there is no year of birth set
+                if(yearOfBirth != -1) {
+                    var currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                    age = currentYear - yearOfBirth
+                } else {
+                    age = -1
+                }
+                Log.i(tag,"year of birth: $yearOfBirth, age: $age")
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        databaseReference.addValueEventListener(databaseListener)
+    }
+
+    // reads user's sport mode setting out of databse
+    private fun addSportModeEventListener(databaseReference: DatabaseReference) {
+        val databaseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val database = dataSnapshot.child("sportMode")
+                sportMode = database.value.toString().toBooleanStrict()
+                Log.i(tag,"sport mode " + database.value)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(tag, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        databaseReference.addValueEventListener(databaseListener)
     }
 
     enum class HeartRateStatus {

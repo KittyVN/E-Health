@@ -79,10 +79,13 @@ class MainActivity : AppCompatActivity() {
     var toggle = false
     private var restingHeartRate = -1.0
     private val tag = "[MainActivity]"
+    private var knownUsers : MutableSet<String> = mutableSetOf()
+
+    // variables that have up do date user data stored. if yearOfBirth and age have their standard
+    // values of -1 there is no user signed in.
     private var yearOfBirth = -1
     private var age = -1
     private var sportMode = false
-    private var knownUsers : MutableSet<String> = mutableSetOf()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -319,7 +322,11 @@ class MainActivity : AppCompatActivity() {
         }else{
             Log.i(tag, "no account")
             yearOfBirth = -1
+            age = -1
             sportMode = false
+            Log.i(tag, "year of birth is $yearOfBirth")
+            Log.i(tag, "age is $age")
+            Log.i(tag, "sport mode $sportMode")
         }
     }
 
