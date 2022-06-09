@@ -110,14 +110,14 @@ class MainActivity : Activity() {
     // tell smartphone that sampling starts
     private fun sendStartSignal() {
         val message = "Start"
-        findFitnessDataSources()
+        //findFitnessDataSources()
         SendMsg("/my_path", message).start()
     }
 
     // tell smartphone that sampling stops
     private fun sendStopSignal() {
         val message = "Stop"
-        removeListener()
+        //removeListener()
         SendMsg("/my_path", message).start()
     }
 
@@ -304,7 +304,7 @@ class MainActivity : Activity() {
                 for (dataSource in dataSources) {
                     Log.i(TAG, "Data source found: $dataSource")
                     Log.i(TAG, "Data Source type: " + dataSource.dataType.name)
-                    if (dataSource.dataType == DataType.TYPE_HEART_RATE_BPM && dataPointListener == null) {
+                    if (dataSource.dataType == DataType.TYPE_HEART_RATE_BPM) {
                         Log.i(TAG, "Data source found!  Registering.")
                         registerFitnessDataListener(dataSource, DataType.TYPE_HEART_RATE_BPM)
                     }
