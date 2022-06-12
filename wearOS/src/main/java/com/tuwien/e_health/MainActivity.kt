@@ -70,7 +70,7 @@ class MainActivity : Activity() {
             if(bpmValue > 180) {
                 bpmValue = 80
             }
-            val dataPath = "/my_path"
+            val dataPath = "/eHealth"
             SendMsg(dataPath, bpmValue.toString()).start()
         }
          */
@@ -91,10 +91,12 @@ class MainActivity : Activity() {
         }
 
         btnPlay.setOnClickListener {
-            if(gameStatus == GameStatus.NOT_RUNNING) {
-                sendStartSignal()
-            } else if(gameStatus == GameStatus.RUNNING){
-                sendStopSignal()
+            if(GoogleSignIn.getLastSignedInAccount(this) != null) {
+                if (gameStatus == GameStatus.NOT_RUNNING) {
+                    sendStartSignal()
+                } else if (gameStatus == GameStatus.RUNNING) {
+                    sendStopSignal()
+                }
             }
         }
 
@@ -111,14 +113,14 @@ class MainActivity : Activity() {
     private fun sendStartSignal() {
         val message = "Start"
         //findFitnessDataSources()
-        SendMsg("/my_path", message).start()
+        SendMsg("/eHealth", message).start()
     }
 
     // tell smartphone that sampling stops
     private fun sendStopSignal() {
         val message = "Stop"
         //removeListener()
-        SendMsg("/my_path", message).start()
+        SendMsg("/eHealth", message).start()
     }
 
     // check for android permissions
@@ -321,8 +323,7 @@ class MainActivity : Activity() {
                 val value = dataPoint.getValue(field)
                 Log.i(TAG, "Detected DataPoint field: ${field.name}")
                 Log.i(TAG, "Detected DataPoint value: $value")
-                val dataPath = "/my_path"
-                SendMsg(dataPath, value.toString()).start()
+                SendMsg("/eHealth", value.toString()).start()
             }
         }
         Fitness.getSensorsClient(this, getGoogleAccount())
