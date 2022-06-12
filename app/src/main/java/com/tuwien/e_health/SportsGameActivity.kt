@@ -179,7 +179,7 @@ class SportsGameActivity : AppCompatActivity() {
             ?.let { addSportModeEventListener(it) }
 
         // Check if user is signed in (non-null) and update UI accordingly
-        updateUI(currentUser)
+        accountInfo(currentUser)
     }
 
     override fun onBackPressed() {
@@ -352,12 +352,25 @@ class SportsGameActivity : AppCompatActivity() {
 
             // set heart rate status and change runner animation accordingly
             private fun setHeartRateStatus() {
-                if(hr >= 0.6*180 && hr <= 0.85*180) {
+
+                // set default value of 180 maxHr (~correct if 40 years old)
+                var maxHeartRate = 180
+                // set default value of 50%
+                var minTargetHeartRatePercent = 0.5
+                if(age != -1) {
+                    maxHeartRate = 220 - age
+                }
+                if(sportMode) {
+                    minTargetHeartRatePercent = 0.65
+                }
+
+
+                if(hr >= minTargetHeartRatePercent*maxHeartRate && hr <= 0.85*maxHeartRate) {
                     // in target heart rate area -> very good
                     //Log.i(tag, "in thr")
                     status = HeartRateStatus.IN_THR
                     runner.setImageResource(R.drawable.runner_neutral)
-                } else if(hr > 0.85*180) {
+                } else if(hr > 0.85*maxHeartRate) {
                     // above target heart rate -> too much
                     //Log.i(tag, "above thr")
                     status = HeartRateStatus.ABOVE_THR
@@ -366,7 +379,7 @@ class SportsGameActivity : AppCompatActivity() {
                     //Log.i(tag, "in rhr")
                     status = HeartRateStatus.IN_RHR
                     runner.setImageResource(R.drawable.runner_rhr)
-                } else if(hr >= 100 && hr < 0.6*180) {
+                } else if(hr >= 100 && hr < minTargetHeartRatePercent*maxHeartRate) {
                     // above rhr, under thr -> ok
                     //Log.i(tag, "above rhr, under thr")
                     status = HeartRateStatus.UNDER_THR
@@ -502,7 +515,7 @@ class SportsGameActivity : AppCompatActivity() {
     }
 
     // logs user data if user is signed it, resets user variables if user is logged out
-    private fun updateUI(user: FirebaseUser?) {
+    private fun accountInfo(user: FirebaseUser?) {
         if (user != null) {
             Log.i(tag, "account signed in")
             Log.i(tag, "personEmail: " + user.email)

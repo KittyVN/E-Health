@@ -527,33 +527,50 @@ class MainActivity : AppCompatActivity() {
     private fun updateMainScreen(rhr: Double) {
         // update background and gifs of main-screen due to resting-heart-rate rhr
         //val rhr = 54.0
+
+        // set default value of 180 maxHr (~correct if 40 years old)
+        var maxHeartRate = 180
+        if(age != -1) {
+            maxHeartRate = 220 - age
+        }
+
         if (rhr <= 0 || rhr.isNaN()) {
             setBackground(0)
-        } else if (rhr in 1.0..59.9) {
-            // best state
-            setBackground(11)
-            setDog(1)
-            setCat(1)
-            setRabbit(1)
-        } else if (rhr in 60.0..79.9) {
+        } else if (rhr >= 1 && rhr < 60) {
+            if(sportMode){
+                // best state
+                setBackground(11)
+                setDog(1)
+                setCat(1)
+                setRabbit(1)
+            } else {
+                // bad state
+                // -> low hr and no sport can be sign for heart problem
+                setBackground(41)
+                setDog(4)
+                setCat(4)
+                setRabbit(4)
+            }
+
+        } else if (rhr >= 60 && rhr < 80) {
             // good state
             setBackground(21)
             setDog(2)
             setCat(2)
             setRabbit(2)
-        } else if (rhr in 80.0..99.9) {
+        } else if (rhr >= 80 && rhr < 100) {
             // semi-good state
             setBackground(31)
             setDog(3)
             setCat(3)
             setRabbit(3)
-        } else if (rhr in 100.0..179.9) {
+        } else if (rhr >= 100 && rhr < maxHeartRate) {
             // bad state
             setBackground(41)
             setDog(4)
             setCat(4)
             setRabbit(4)
-        } else if (rhr >= 180) {
+        } else if (rhr >= maxHeartRate) {
             // worst state
             setBackground(51)
             setDog(5)
@@ -777,6 +794,11 @@ class MainActivity : AppCompatActivity() {
         builder.setPositiveButton("Ok", null)
         var messageBasic = "Your resting heart rate of the past six hours is " + restingHeartRate.toLong() + ". "
         var messageAdvanced = ""
+        // set default value of 180 maxHr (~correct if 40 years old)
+        var maxHeartRate = 180
+        if(age != -1) {
+            maxHeartRate = 220 - age
+        }
 
         if (restingHeartRate <= 0 || restingHeartRate.isNaN()) {
             // no rhr detected
@@ -784,31 +806,40 @@ class MainActivity : AppCompatActivity() {
             messageAdvanced =
                 "Unfortunately we could not detect a heart rate. Maybe check your Google Fit Account."
             builder.setIcon(R.drawable.ic_baseline_help_outline_24)
-        } else if (restingHeartRate in 1.0..59.9) {
-            // best state
+        } else if (restingHeartRate >= 1 && restingHeartRate < 60) {
+            if(sportMode) {
+                // best state
 
-            messageAdvanced =
-                "This is a extremely good value (<60). Either you were sleeping or your heart is very well trained."
-            builder.setIcon(R.drawable.ic_baseline_mood_24)
-        } else if (restingHeartRate in 60.0..79.9) {
+                messageAdvanced =
+                    "This is a extremely good value (<60). Either you were sleeping or your heart is very well trained."
+                builder.setIcon(R.drawable.ic_baseline_mood_24)
+            } else {
+                // bad
+
+                messageAdvanced =
+                    "A resting heart rate under 60 without doing sport might be an indicator for heart problems (or you were just sleeping). If your heart rate is under 60 for a very long time you might want to get yourself checked by a professional."
+                builder.setIcon(R.drawable.ic_baseline_sentiment_dissatisfied_24)
+            }
+
+        } else if (restingHeartRate >= 60 && restingHeartRate < 80) {
             // good state
 
             messageAdvanced =
                 "This is a very good heart rate (60 - 80). Seems like you are very relaxed."
             builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_alt_24)
-        } else if (restingHeartRate in 80.0..99.9) {
+        } else if (restingHeartRate >= 80 && restingHeartRate < 100) {
 
             // semi-good state
             messageAdvanced =
                 "This is a fairly decent resting heart rate (80 - 100). The next better area would be 60 - 80."
             builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_24)
-        } else if (restingHeartRate in 100.0..179.9) {
+        } else if (restingHeartRate >= 100 && restingHeartRate < maxHeartRate) {
             // bad
 
             messageAdvanced =
                 "A resting heart rate over 100 might be an indicator for high stress or heart problems. If your heart rate is over 100 for a very long time you might want to get yourself checked by a professional."
             builder.setIcon(R.drawable.ic_baseline_sentiment_dissatisfied_24)
-        } else if (restingHeartRate >= 180) {
+        } else if (restingHeartRate >= maxHeartRate) {
             // worst state
 
             messageAdvanced =
