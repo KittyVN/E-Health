@@ -437,7 +437,7 @@ class SettingsActivity : AppCompatActivity() {
                 "\n" +
                 "To fully use this app, you need to have a WearOS smartwatch connected to your " +
                 "smartphone. Additionally, you must have BPM-Pond and Google Fit installed on your " +
-                "phone and smartwatch. Your smartwatch has to be coupled with the Google Fit\n" +
+                "phone and smartwatch. Your smartwatch has to be coupled with the Google Fit app.\n" +
                 "\n" +
                 "Legal disclaimer\n" +
                 "\n" +

@@ -26,7 +26,8 @@
             android:id="@+id/buttonPanelLogIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LogIn"/>
+            android:background="@drawable/rounded_button"
+            android:text="Log In"/>
     </LinearLayout>
 
 
@@ -65,6 +66,7 @@
                 android:layout_width="43dp"
                 android:layout_height="43dp"
                 android:layout_marginTop="30dp"
+                android:background="@drawable/rounded_button"
                 android:drawableBottom="@drawable/ic_baseline_play_arrow_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
