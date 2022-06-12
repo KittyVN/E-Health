@@ -52,6 +52,12 @@ class MainActivity : Activity() {
     private val RC_SIGNIN = 0
     private val RC_PERMISSION = 1
     private var messageHandler = Handler()
+    private var gameStatus = GameStatus.NOT_RUNNING
+
+
+    enum class GameStatus {
+        RUNNING, NOT_RUNNING
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +90,14 @@ class MainActivity : Activity() {
             }
         }
 
+        btnPlay.setOnClickListener {
+            if(gameStatus == GameStatus.NOT_RUNNING) {
+                sendStartSignal()
+            } else if(gameStatus == GameStatus.RUNNING){
+                sendStopSignal()
+            }
+        }
+
         // register to receive local broadcasts
         val newFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver = Receiver()
@@ -93,6 +107,19 @@ class MainActivity : Activity() {
         checkPermissions()
     }
 
+    // tell smartphone that sampling starts
+    private fun sendStartSignal() {
+        val message = "Start"
+        //findFitnessDataSources()
+        SendMsg("/my_path", message).start()
+    }
+
+    // tell smartphone that sampling stops
+    private fun sendStopSignal() {
+        val message = "Stop"
+        //removeListener()
+        SendMsg("/my_path", message).start()
+    }
 
     // check for android permissions
     private fun checkPermissions() {
@@ -145,13 +172,19 @@ class MainActivity : Activity() {
                 findFitnessDataSources()
                 lastMsgTimeStamp = LocalDateTime.now()
                 timeChecker.run()
-            } else if (intent.getStringExtra("message").toString() == "Stop") {
+                btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_pause_24)
+                gameStatus = GameStatus.RUNNING
+            } else if (intent.getStringExtra("message").toString() == "Stop" && gameStatus == GameStatus.RUNNING) {
                 removeListener()
                 messageHandler.removeCallbacks(timeChecker)
+                btnPlay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_baseline_play_arrow_24)
+                gameStatus = GameStatus.NOT_RUNNING
+            } else if (intent.getStringExtra("message").toString() == "Stop" && gameStatus == GameStatus.NOT_RUNNING) {
+                removeListener()
+                gameStatus = GameStatus.NOT_RUNNING
             } else {
                 lastMsgTimeStamp = LocalDateTime
                     .parse(intent.getStringExtra("message").toString(), DateTimeFormatter.ISO_DATE_TIME)
-
             }
         }
 
@@ -162,7 +195,7 @@ class MainActivity : Activity() {
                     Log.i(TAG, "$lastMsgTimeStamp " + LocalDateTime.now())
                     if (lastMsgTimeStamp < LocalDateTime.now().minusSeconds(10)) {
                         // no alive msg from smartwatch since given time -> turn off sampling
-                        removeListener()
+                        //removeListener()
                         Log.i(TAG, "I haven't received a msg since $lastMsgTimeStamp")
                         messageHandler.removeCallbacks(this)
                         return
@@ -271,7 +304,7 @@ class MainActivity : Activity() {
                 for (dataSource in dataSources) {
                     Log.i(TAG, "Data source found: $dataSource")
                     Log.i(TAG, "Data Source type: " + dataSource.dataType.name)
-                    if (dataSource.dataType == DataType.TYPE_HEART_RATE_BPM && dataPointListener == null) {
+                    if (dataSource.dataType == DataType.TYPE_HEART_RATE_BPM) {
                         Log.i(TAG, "Data source found!  Registering.")
                         registerFitnessDataListener(dataSource, DataType.TYPE_HEART_RATE_BPM)
                     }

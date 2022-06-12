@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.Slide
@@ -52,6 +53,7 @@ class SportsGameActivity : AppCompatActivity() {
     private var hr = 144L
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
+    private var gameStatus = false
 
     // variables that have up do date user data stored. if yearOfBirth and age have their standard
     // values of -1 there is no user signed in.
@@ -87,8 +89,10 @@ class SportsGameActivity : AppCompatActivity() {
 
         // start game
         btnStart.setOnClickListener {
+            gameStatus = true
             sendStartSignal()
             gameTimer.start()
+            //tvBpm.text = "999 "
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
             btnStart.visibility = View.INVISIBLE
@@ -153,6 +157,9 @@ class SportsGameActivity : AppCompatActivity() {
         val messageFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver: SportsGameActivity.Receiver = SportsGameActivity().Receiver()
         messageReceiver.setBpmTextView(tvBpm)
+        messageReceiver.setPauseBtn(btnPause)
+        messageReceiver.setContinueBtn(btnContinue)
+        messageReceiver.setStartBtn(btnStart)
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
 
     }
@@ -190,16 +197,49 @@ class SportsGameActivity : AppCompatActivity() {
     // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
         private lateinit var tvB: TextView
+        private lateinit var btnP: Button
+        private lateinit var btnC: Button
+        private lateinit var btnS: Button
 
         fun setBpmTextView(tv: TextView){
             tvB = tv
         }
 
+        fun setPauseBtn(btnX: Button){
+            btnP = btnX
+        }
+
+        fun setContinueBtn(btnX: Button){
+            btnC = btnX
+        }
+
+        fun setStartBtn(btnX: Button){
+            btnS = btnX
+        }
+
         override fun onReceive(context: Context, intent: Intent) {
             val bpm = intent.getStringExtra("message").toString()
-            Log.i(tag, "Incoming msg: $bpm")
-            hr = bpm.toDouble().toLong()
-            tvB.text = "$hr "
+            Log.i(tag, tvB.text.toString())
+            if(bpm == "Start" && tvB.text == "0 ") {
+                // start when game not started
+                btnS.performClick()
+                Log.i(tag, "Start")
+            } else if(bpm == "Start"  && tvB.text != "0 ") {
+                // continue when game paused
+                btnC.performClick()
+                Log.i(tag, "Continue")
+            } else if(bpm == "Stop" && tvB.text != "0 ") {
+                // pause when game running
+                Log.i(tag, "Stop")
+                btnP.performClick()
+            } else if(bpm == "Stop" && tvB.text == "0 ") {
+                // cant stop before game started
+            } else {
+                // msg is bpm value
+                Log.i(tag, "Incoming msg: $bpm")
+                hr = bpm.toDouble().toLong()
+                tvB.text = "$hr "
+            }
         }
     }
 
@@ -296,6 +336,7 @@ class SportsGameActivity : AppCompatActivity() {
             override fun onFinish() {
                 // time over
 
+                gameStatus = false
                 sendStopSignal()
                 tvTime.text = "00:00 "
                 btnStart.text = "Run again"
