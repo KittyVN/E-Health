@@ -792,6 +792,7 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(" ")
         builder.setPositiveButton("Ok", null)
+
         var messageBasic = "Your resting heart rate of the past six hours is " + restingHeartRate.toLong() + ". "
         var messageAdvanced = ""
         // set default value of 180 maxHr (~correct if 40 years old)
@@ -831,7 +832,7 @@ class MainActivity : AppCompatActivity() {
 
             // semi-good state
             messageAdvanced =
-                "This is a fairly decent resting heart rate (80 - 100). The next better area would be 60 - 80."
+                "This is a fairly decent resting heart rate (in range 80 - 100 bpm). The next better area would be 60 - 80 bpm."
             builder.setIcon(R.drawable.ic_baseline_sentiment_satisfied_24)
         } else if (restingHeartRate >= 100 && restingHeartRate < maxHeartRate) {
             // bad
