@@ -9,7 +9,7 @@ import com.google.android.gms.wearable.WearableListenerService
 class MessageService : WearableListenerService() {
     override fun onMessageReceived(messageEvent: MessageEvent) {
 
-        if (messageEvent.path == "/my_path") {
+        if (messageEvent.path == "/eHealth") {
 
             val message = String(messageEvent.data)
             val messageIntent = Intent()

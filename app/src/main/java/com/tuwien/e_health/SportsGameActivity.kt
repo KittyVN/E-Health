@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.Slide
@@ -52,6 +53,7 @@ class SportsGameActivity : AppCompatActivity() {
     private var hr = 144L
     private var status : HeartRateStatus? = null
     private var heartRateMsgTime = 0L
+    private var gameStatus = false
 
     // variables that have up do date user data stored. if yearOfBirth and age have their standard
     // values of -1 there is no user signed in.
@@ -87,8 +89,10 @@ class SportsGameActivity : AppCompatActivity() {
 
         // start game
         btnStart.setOnClickListener {
+            gameStatus = true
             sendStartSignal()
             gameTimer.start()
+            //tvBpm.text = "999 "
             runner.visibility = View.VISIBLE
             bahn.visibility = View.INVISIBLE
             btnStart.visibility = View.INVISIBLE
@@ -153,6 +157,9 @@ class SportsGameActivity : AppCompatActivity() {
         val messageFilter = IntentFilter(Intent.ACTION_SEND)
         val messageReceiver: SportsGameActivity.Receiver = SportsGameActivity().Receiver()
         messageReceiver.setBpmTextView(tvBpm)
+        messageReceiver.setPauseBtn(btnPause)
+        messageReceiver.setContinueBtn(btnContinue)
+        messageReceiver.setStartBtn(btnStart)
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter)
 
     }
@@ -172,7 +179,7 @@ class SportsGameActivity : AppCompatActivity() {
             ?.let { addSportModeEventListener(it) }
 
         // Check if user is signed in (non-null) and update UI accordingly
-        updateUI(currentUser)
+        accountInfo(currentUser)
     }
 
     override fun onBackPressed() {
@@ -190,35 +197,68 @@ class SportsGameActivity : AppCompatActivity() {
     // receive message from wearable
     inner class Receiver : BroadcastReceiver() {
         private lateinit var tvB: TextView
+        private lateinit var btnP: Button
+        private lateinit var btnC: Button
+        private lateinit var btnS: Button
 
         fun setBpmTextView(tv: TextView){
             tvB = tv
         }
 
+        fun setPauseBtn(btnX: Button){
+            btnP = btnX
+        }
+
+        fun setContinueBtn(btnX: Button){
+            btnC = btnX
+        }
+
+        fun setStartBtn(btnX: Button){
+            btnS = btnX
+        }
+
         override fun onReceive(context: Context, intent: Intent) {
             val bpm = intent.getStringExtra("message").toString()
-            Log.i(tag, "Incoming msg: $bpm")
-            hr = bpm.toDouble().toLong()
-            tvB.text = "$hr "
+            Log.i(tag, tvB.text.toString())
+            if(bpm == "Start" && tvB.text == "0 ") {
+                // start when game not started
+                btnS.performClick()
+                Log.i(tag, "Start")
+            } else if(bpm == "Start"  && tvB.text != "0 ") {
+                // continue when game paused
+                btnC.performClick()
+                Log.i(tag, "Continue")
+            } else if(bpm == "Stop" && tvB.text != "0 ") {
+                // pause when game running
+                Log.i(tag, "Stop")
+                btnP.performClick()
+            } else if(bpm == "Stop" && tvB.text == "0 ") {
+                // cant stop before game started
+            } else {
+                // msg is bpm value
+                Log.i(tag, "Incoming msg: $bpm")
+                hr = bpm.toDouble().toLong()
+                tvB.text = "$hr "
+            }
         }
     }
 
     // tell wearable to start heart rate sampling
     private fun sendStartSignal() {
         val message = "Start"
-        SendMsg("/my_path", message).start()
+        SendMsg("/eHealth", message).start()
     }
 
     // tell wearable to stop heart rate sampling
     private fun sendStopSignal() {
         val message = "Stop"
-        SendMsg("/my_path", message).start()
+        SendMsg("/eHealth", message).start()
     }
 
     // tell wearable app is still alive at this time
     private fun sendTimeStamp() {
         val message = LocalDateTime.now().toString()
-        SendMsg("/my_path", message).start()
+        SendMsg("/eHealth", message).start()
     }
 
     // send message to wearable
@@ -296,6 +336,7 @@ class SportsGameActivity : AppCompatActivity() {
             override fun onFinish() {
                 // time over
 
+                gameStatus = false
                 sendStopSignal()
                 tvTime.text = "00:00 "
                 btnStart.text = "Run again"
@@ -311,12 +352,25 @@ class SportsGameActivity : AppCompatActivity() {
 
             // set heart rate status and change runner animation accordingly
             private fun setHeartRateStatus() {
-                if(hr >= 0.6*180 && hr <= 0.85*180) {
+
+                // set default value of 180 maxHr (~correct if 40 years old)
+                var maxHeartRate = 180
+                // set default value of 50%
+                var minTargetHeartRatePercent = 0.5
+                if(age != -1) {
+                    maxHeartRate = 220 - age
+                }
+                if(sportMode) {
+                    minTargetHeartRatePercent = 0.65
+                }
+
+
+                if(hr >= minTargetHeartRatePercent*maxHeartRate && hr <= 0.85*maxHeartRate) {
                     // in target heart rate area -> very good
                     //Log.i(tag, "in thr")
                     status = HeartRateStatus.IN_THR
                     runner.setImageResource(R.drawable.runner_neutral)
-                } else if(hr > 0.85*180) {
+                } else if(hr > 0.85*maxHeartRate) {
                     // above target heart rate -> too much
                     //Log.i(tag, "above thr")
                     status = HeartRateStatus.ABOVE_THR
@@ -325,7 +379,7 @@ class SportsGameActivity : AppCompatActivity() {
                     //Log.i(tag, "in rhr")
                     status = HeartRateStatus.IN_RHR
                     runner.setImageResource(R.drawable.runner_rhr)
-                } else if(hr >= 100 && hr < 0.6*180) {
+                } else if(hr >= 100 && hr < minTargetHeartRatePercent*maxHeartRate) {
                     // above rhr, under thr -> ok
                     //Log.i(tag, "above rhr, under thr")
                     status = HeartRateStatus.UNDER_THR
@@ -461,7 +515,7 @@ class SportsGameActivity : AppCompatActivity() {
     }
 
     // logs user data if user is signed it, resets user variables if user is logged out
-    private fun updateUI(user: FirebaseUser?) {
+    private fun accountInfo(user: FirebaseUser?) {
         if (user != null) {
             Log.i(tag, "account signed in")
             Log.i(tag, "personEmail: " + user.email)

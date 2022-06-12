@@ -30,6 +30,17 @@ class NoGoogleAccountActivity : AppCompatActivity() {
         return
     }
 
+    /*
+
+        This activity only shows, when there is no google account on the smartphone. Due to some
+        bugs with firebase the user should create a google account before starting the app for the
+        first time. Will also pop up, if google account was only created in last ~5-10 min due to
+        synchronization delays.
+
+        Will pretty much never be the case anyway (safety first)
+
+     */
+
     private fun showPopup() {
 
         val builder = AlertDialog.Builder(this)

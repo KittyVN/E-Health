@@ -26,7 +26,56 @@
             android:id="@+id/buttonPanelLogIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LogIn"/>
+            android:background="@drawable/rounded_button"
+            android:text="Log In"/>
     </LinearLayout>
+
+
+    <androidx.wear.widget.BoxInsetLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:padding="8dp"
+        tools:deviceIds="wear"
+        tools:context=".MainActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            app:layout_boxedEdges="all">
+
+            <ImageView
+                android:id="@+id/circlePlay"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/ic_baseline_circle_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:visibility="visible"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnPlay"
+                android:textSize="18sp"
+                android:padding="0dp"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/rounded_button"
+                android:drawableBottom="@drawable/ic_baseline_play_arrow_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:visibility="visible"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.wear.widget.BoxInsetLayout>
+
 
 </androidx.wear.widget.BoxInsetLayout>
