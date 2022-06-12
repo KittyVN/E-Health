@@ -357,7 +357,7 @@ class SportsGameActivity : AppCompatActivity() {
                     maxHeartRate = 220 - age
                 }
                 if(sportMode) {
-                    minTargetHeartRatePercent = 0.65
+                    minTargetHeartRatePercent = 0.6
                 }
 
 
