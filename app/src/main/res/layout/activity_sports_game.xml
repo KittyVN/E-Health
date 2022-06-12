@@ -39,7 +39,7 @@
         android:id="@+id/runner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/runner_neutral"
+        android:src="@drawable/runner_thr"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toBottomOf="parent"

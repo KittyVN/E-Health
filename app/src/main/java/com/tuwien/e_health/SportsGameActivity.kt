@@ -1,6 +1,5 @@
 package com.tuwien.e_health
 
-import android.annotation.SuppressLint
 import android.content.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,10 +28,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_sports_game.*
-import org.w3c.dom.Text
 import java.time.LocalDateTime
-import java.time.Month
-import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
@@ -369,11 +365,12 @@ class SportsGameActivity : AppCompatActivity() {
                     // in target heart rate area -> very good
                     //Log.i(tag, "in thr")
                     status = HeartRateStatus.IN_THR
-                    runner.setImageResource(R.drawable.runner_neutral)
+                    runner.setImageResource(R.drawable.runner_thr)
                 } else if(hr > 0.85*maxHeartRate) {
                     // above target heart rate -> too much
                     //Log.i(tag, "above thr")
                     status = HeartRateStatus.ABOVE_THR
+                    runner.setImageResource(R.drawable.runner_above_thr)
                 } else if(hr <= 100) {
                     // in resting heart rate area -> too low
                     //Log.i(tag, "in rhr")
@@ -383,7 +380,7 @@ class SportsGameActivity : AppCompatActivity() {
                     // above rhr, under thr -> ok
                     //Log.i(tag, "above rhr, under thr")
                     status = HeartRateStatus.UNDER_THR
-                    runner.setImageResource(R.drawable.runner_neutral)
+                    runner.setImageResource(R.drawable.runner_rhr_to_thr)
                 }
             }
 
