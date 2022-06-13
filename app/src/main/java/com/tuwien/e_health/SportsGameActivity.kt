@@ -386,6 +386,18 @@ class SportsGameActivity : AppCompatActivity() {
 
             // check for heart rate message
             private fun checkHeartRateMessage(millisLeft: Long) {
+
+                // set default value of 180 maxHr (~correct if 40 years old)
+                var maxHeartRate = 180
+                // set default value of 50%
+                var minTargetHeartRatePercent = 0.5
+                if(age != -1) {
+                    maxHeartRate = 220 - age
+                }
+                if(sportMode) {
+                    minTargetHeartRatePercent = 0.6
+                }
+
                 if (status == HeartRateStatus.IN_RHR && !bpmChecker) {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
@@ -396,14 +408,14 @@ class SportsGameActivity : AppCompatActivity() {
                 } else if (status == HeartRateStatus.IN_THR && !bpmChecker) {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
-                    btnMessage.text = "Very good! Stay between " + (0.6*180).toLong() + " - " + (0.85*180).toLong() +" BPM!"
+                    btnMessage.text = "Very good! Stay between " + (minTargetHeartRatePercent*maxHeartRate).toLong() + " - " + (0.85*maxHeartRate).toLong() +" BPM!"
                     showHeartRateMessage.run()
                 } else if((status == HeartRateStatus.IN_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-20000L))) {
                     bpmChecker = false
                 } else if (status == HeartRateStatus.ABOVE_THR && !bpmChecker) {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
-                    btnMessage.text = "You are trying too hard. Slow down a little bit! Go under " + (0.85*180).toLong() +" BPM!"
+                    btnMessage.text = "You are trying too hard. Slow down a little bit! Go under " + (0.85*maxHeartRate).toLong() +" BPM!"
                     showHeartRateMessage.run()
                 } else if((status == HeartRateStatus.ABOVE_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
                     bpmChecker = false
@@ -411,7 +423,7 @@ class SportsGameActivity : AppCompatActivity() {
                     heartRateMsgTime = millisLeft
                     bpmChecker = true
                 } else if((status == HeartRateStatus.UNDER_THR) && bpmChecker && (millisLeft <= (heartRateMsgTime-10000L))) {
-                    btnMessage.text = "Try a bit harder! Get between " + (0.6*180).toLong() + " - " + (0.85*180).toLong() +" BPM!"
+                    btnMessage.text = "Try a bit harder! Get between " + (minTargetHeartRatePercent*maxHeartRate).toLong() + " - " + (0.85*maxHeartRate).toLong() +" BPM!"
                     showHeartRateMessage.run()
                     bpmChecker = false
                 }
