@@ -70,7 +70,7 @@ class MainActivity : Activity() {
             if(bpmValue > 180) {
                 bpmValue = 80
             }
-            val dataPath = "/eHealth"
+            val dataPath = "/my_path"
             SendMsg(dataPath, bpmValue.toString()).start()
         }
          */
@@ -113,14 +113,14 @@ class MainActivity : Activity() {
     private fun sendStartSignal() {
         val message = "Start"
         //findFitnessDataSources()
-        SendMsg("/eHealth", message).start()
+        SendMsg("/my_path", message).start()
     }
 
     // tell smartphone that sampling stops
     private fun sendStopSignal() {
         val message = "Stop"
         //removeListener()
-        SendMsg("/eHealth", message).start()
+        SendMsg("/my_path", message).start()
     }
 
     // check for android permissions
@@ -323,7 +323,7 @@ class MainActivity : Activity() {
                 val value = dataPoint.getValue(field)
                 Log.i(TAG, "Detected DataPoint field: ${field.name}")
                 Log.i(TAG, "Detected DataPoint value: $value")
-                SendMsg("/eHealth", value.toString()).start()
+                SendMsg("/my_path", value.toString()).start()
             }
         }
         Fitness.getSensorsClient(this, getGoogleAccount())

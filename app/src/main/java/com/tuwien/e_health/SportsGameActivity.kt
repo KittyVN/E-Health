@@ -242,19 +242,19 @@ class SportsGameActivity : AppCompatActivity() {
     // tell wearable to start heart rate sampling
     private fun sendStartSignal() {
         val message = "Start"
-        SendMsg("/eHealth", message).start()
+        SendMsg("/my_path", message).start()
     }
 
     // tell wearable to stop heart rate sampling
     private fun sendStopSignal() {
         val message = "Stop"
-        SendMsg("/eHealth", message).start()
+        SendMsg("/my_path", message).start()
     }
 
     // tell wearable app is still alive at this time
     private fun sendTimeStamp() {
         val message = LocalDateTime.now().toString()
-        SendMsg("/eHealth", message).start()
+        SendMsg("/my_path", message).start()
     }
 
     // send message to wearable
