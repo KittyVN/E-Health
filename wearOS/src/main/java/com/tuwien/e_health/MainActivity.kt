@@ -83,6 +83,7 @@ class MainActivity : Activity() {
         }
 
         buttonPanelLogIn.setOnClickListener {
+            // still need sign in on wear os because google fit sensor api needs it
             if (GoogleSignIn.getLastSignedInAccount(this) == null) {
                 signIn()
             } else {
@@ -91,6 +92,7 @@ class MainActivity : Activity() {
         }
 
         btnPlay.setOnClickListener {
+            // can only pause save is signed in
             if(GoogleSignIn.getLastSignedInAccount(this) != null) {
                 if (gameStatus == GameStatus.NOT_RUNNING) {
                     sendStartSignal()

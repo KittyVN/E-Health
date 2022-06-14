@@ -202,124 +202,6 @@ class StatisticsActivity : AppCompatActivity() {
             }
     }
 
-    private fun actualSetDataToLineChart(booleanDayWeek: Boolean, howFarBackForwardDay: Long, howFarBackForwardWeek: Long){
-        val entriesAVG: ArrayList<Entry> = ArrayList()
-        val entriesMIN: ArrayList<Entry> = ArrayList()
-        val entriesMAX: ArrayList<Entry> = ArrayList()
-
-
-        if (booleanDayWeek){
-
-            for (i in scoreList.indices) {
-                val score = scoreList[i]
-                entriesAVG.add(Entry(i.toFloat(), score.scoreAVG))
-                entriesMIN.add(Entry(i.toFloat(), score.scoreMIN))
-                entriesMAX.add(Entry(i.toFloat(), score.scoreMAX))
-            }
-
-            val lineDataSetAVG = LineDataSet(entriesAVG,"Average")
-            val lineDataSetMIN = LineDataSet(entriesMIN,"Minimum")
-            val lineDataSetMAX = LineDataSet(entriesMAX,"Maximum")
-
-
-            lineDataSetAVG.valueTextSize = 12f
-            lineDataSetAVG.setDrawValues(false)
-            lineDataSetAVG.setDrawCircles(false)
-            lineDataSetAVG.setDrawCircleHole(false)
-            lineDataSetAVG.lineWidth = 2f
-            lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.green_200)
-            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.green_200)
-
-            lineDataSetAVG.notifyDataSetChanged()
-            Log.i("DatasetAVG:", lineDataSetAVG.toString())
-            val dataSets: ArrayList<ILineDataSet> = ArrayList()
-            dataSets.add(lineDataSetAVG)
-
-            //dataSets.add(lineDataSetMAX)
-            //dataSets.add(lineDataSetMIN)
-
-            val data = LineData(dataSets)
-            lineChart.data = data
-
-            lineChart.notifyDataSetChanged()
-            lineChart.invalidate()
-            scoreList.clear()
-
-        }else{
-
-            for (i in scoreList.indices) {
-                val score = scoreList[i]
-                entriesAVG.add(Entry(i.toFloat(), score.scoreAVG))
-                entriesMIN.add(Entry(i.toFloat(), score.scoreMIN))
-                entriesMAX.add(Entry(i.toFloat(), score.scoreMAX))
-            }
-/*
-            for (i in scoreListMIN.indices) {
-                val score = scoreListMIN[i]
-                entriesMIN.add(Entry(i.toFloat(), score.score))
-            }
-
-            for (i in scoreListMAX.indices) {
-                val score = scoreListMAX[i]
-                entriesMAX.add(Entry(i.toFloat(), score.score))
-            }*/
-
-
-            val lineDataSetAVG = LineDataSet(entriesAVG,"Average")
-            val lineDataSetMIN = LineDataSet(entriesMIN,"Minimum")
-            val lineDataSetMAX = LineDataSet(entriesMAX,"Maximum")
-
-            lineDataSetAVG.setDrawValues(false)
-            lineDataSetAVG.setDrawCircles(false)
-
-            lineDataSetMIN.setDrawValues(false)
-            lineDataSetMIN.setDrawCircles(false)
-
-            lineDataSetMAX.setDrawValues(false)
-            lineDataSetMAX.setDrawCircles(false)
-
-            lineDataSetAVG.lineWidth = 2f
-            lineDataSetAVG.valueTextSize = 15f
-            lineDataSetAVG.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetAVG.color = ContextCompat.getColor(this, R.color.green_200)
-            lineDataSetAVG.valueTextColor = ContextCompat.getColor(this, R.color.green_200)
-
-            lineDataSetMIN.lineWidth = 2f
-            lineDataSetMIN.valueTextSize = 15f
-            lineDataSetMIN.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetMIN.color = ContextCompat.getColor(this, R.color.green_500)
-            lineDataSetMIN.valueTextColor = ContextCompat.getColor(this, R.color.green_500)
-
-            lineDataSetMAX.lineWidth = 2f
-            lineDataSetMAX.valueTextSize = 15f
-            lineDataSetMAX.mode = LineDataSet.Mode.CUBIC_BEZIER
-            lineDataSetMAX.color = ContextCompat.getColor(this, R.color.green_500)
-            lineDataSetMAX.valueTextColor = ContextCompat.getColor(this, R.color.green_500)
-
-            lineDataSetAVG.notifyDataSetChanged()
-            lineDataSetMAX.notifyDataSetChanged()
-            lineDataSetMIN.notifyDataSetChanged()
-
-            Log.i("DatasetAVG:", lineDataSetAVG.toString())
-
-            val dataSets: ArrayList<ILineDataSet> = ArrayList()
-            dataSets.add(lineDataSetAVG)
-            dataSets.add(lineDataSetMAX)
-            dataSets.add(lineDataSetMIN)
-
-            val data = LineData(dataSets)
-
-            lineChart.data = data
-            lineChart.xAxis.valueFormatter = MyAxisFormatter()
-
-            lineChart.notifyDataSetChanged()
-            lineChart.invalidate()
-            scoreList.clear()
-        }
-    }
-
-
      private fun getScoreList(booleanDayWeek: Boolean, howFarBackForwardDay : Long, howFarBackForwardWeek : Long){
          scoreList.clear()
          // data for 1 day
@@ -502,6 +384,7 @@ class StatisticsActivity : AppCompatActivity() {
 
     }
 
+    // beautiful code incoming
     private fun saveDatasetInArray(dataSet: DataSet,booleanDayWeek: Boolean){
         // show important info of heart rate datapoint
         val entriesAVG: ArrayList<Entry> = ArrayList()

@@ -330,51 +330,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: Delete this function. It's not needed anymore
-    private fun readHeartRateData(timeInterval: TimeUnit, endTime: ZonedDateTime, startTime: ZonedDateTime) {
-        // extract heart rate for given time period
-
-        Log.i(tag, "Range Start: $startTime")
-        Log.i(tag, "Range End: $endTime")
-
-        // create read request
-        val readRequest =
-            DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_HEART_RATE_BPM)
-                //.aggregate(DataType.TYPE_STEP_COUNT_DELTA)
-                .bucketByTime(1, timeInterval)
-                .setTimeRange(
-                    startTime.toEpochSecond(), endTime.toEpochSecond(),
-                    TimeUnit.SECONDS
-                )
-                .build()
-
-
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-
-        // do read request
-        if (account != null) {
-            testCounter = 0
-
-            val bpmValues: MutableList<DataSet> = mutableListOf()
-            Fitness.getHistoryClient(this, account)
-                .readData(readRequest)
-                .addOnSuccessListener { response ->
-                    for (dataSet in response.buckets.flatMap { it.dataSets }) {
-                        // not every dataSet has dataPoint
-                        for (dp in dataSet.dataPoints) {
-                            bpmValues.add(dataSet)
-                        }
-                        showDataSet(dataSet)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w(tag, "There was a problem getting the heart rate.", e)
-                }
-
-        }
-    }
-
     private fun read6hActivities() {
         // extract activities for given time period
 
